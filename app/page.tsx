@@ -13,23 +13,28 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronLeft, ChevronRight, Send, Share2 } from "lucide-react";
-import Image from "next/image"; // error: Module '"next/image"' has no exported member 'Image'. Did you mean to use 'import Image from "next/image"' instead?
 import React, { useCallback, useEffect, useState } from "react";
-type TranslateFunction = (en: string, es: string) => string;
+import TapestryComponent from "./tapestry-component";
+import CareLogComponent from "./care-log-component";
+import MilestonesComponent from "./milestones-component";
+import MyLibraryComponent from "./my-library-component";
+import PodcastComponent from './podcast-component';
+import dynamic from 'next/dynamic';
 
-// Added custom marquee animation styles
-// const marqueeStyles = {
-//   animation: "marquee 20s linear infinite",
-//   "@keyframes marquee": {
-//     "0%": { transform: "translateX(100%)" },
-//     "100%": { transform: "translateX(-100%)" },
-//   },
-// };
+// Dynamically import Image component
+const Image = dynamic(() => import('next/image'), { ssr: false });
+
+type TranslateFunction = (en: string, es: string) => string;
 
 export default function Home() {
   const [activeTab, setActiveTab] = React.useState("home");
   const [points, setPoints] = React.useState(0);
   const [language, setLanguage] = React.useState("en");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const addPoints = (amount: number) => {
     setPoints((prevPoints) => prevPoints + amount);
@@ -43,6 +48,11 @@ export default function Home() {
     return (en: string, es: string) => (language === "en" ? en : es);
   }, [language]);
 
+  if (!mounted) {
+    return null;
+  }
+
+// Rest of your components (HomeComponent and NewsTicker) remain the same...
   return (
     <div className="flex flex-col min-h-screen">
       <header className="bg-primary text-primary-foreground p-4">
@@ -83,10 +93,26 @@ export default function Home() {
                   {translate("Podcasts", "Podcasts")}
                 </TabsTrigger>
               </TabsList>
+
+              
               <TabsContent value="home">
                 <HomeComponent addPoints={addPoints} translate={translate} />
               </TabsContent>
-              {/* Add other TabsContent components here for other tabs */}
+              <TabsContent value="tapestry">
+                <TapestryComponent addPoints={addPoints} translate={translate} />
+              </TabsContent>
+              <TabsContent value="carelog">
+                <CareLogComponent addPoints={addPoints} translate={translate} />
+              </TabsContent>
+              <TabsContent value="milestones">
+                <MilestonesComponent />
+              </TabsContent>
+              <TabsContent value="library">
+              <MyLibraryComponent translate={translate} content={""} />
+              </TabsContent>
+              <TabsContent value="podcasts">
+              <PodcastComponent translate={translate} addPoints={addPoints} />
+             </TabsContent>
             </Tabs>
           </CardContent>
         </Card>

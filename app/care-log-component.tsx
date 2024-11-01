@@ -1,16 +1,27 @@
+
+// import { Button } from "@/components/ui/button";
+// import {
+//   Card,
+//   CardContent,
+//   CardDescription,
+//   CardHeader,
+//   CardTitle,
+// } from "@/components/ui/card";
+
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+              Card,
+              CardContent,
+              CardDescription,
+              CardHeader,
+              CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Camera, CloudSun, Calendar } from "lucide-react";
+import { format } from "date-fns";
 
 interface CareLogComponentProps {
   addPoints?: (amount: number) => void;

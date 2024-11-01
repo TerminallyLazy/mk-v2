@@ -4,23 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Plus,
-  FileText,
-  Trash2,
-  Send,
-  Calendar,
-  Clock,
-  Share2,
-  FileUp,
-} from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Plus, FileText, Trash2, Send, Calendar, Clock, Share2, FileUp } from "lucide-react";
 
 interface MyLibraryComponentProps {
   translate?: (en: string, es: string) => string;
@@ -29,17 +14,15 @@ interface MyLibraryComponentProps {
 interface LibraryItem {
   id: number;
   title: string;
-  content: string;import React, { useState } from 'react'
-  import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-  import { Button } from "@/components/ui/button"
-  import { Input } from "@/components/ui/input"
-  import { ScrollArea } from "@/components/ui/scroll-area"
-  import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-  import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-  import { Plus, FileText, Trash2, Send, Calendar, Clock, Share2, FileUp } from 'lucide-react'
+  content: string;
+  section: string;
+  date: string;
+  time: string;
+  tags: string[];
+}
 
   interface MyLibraryComponentProps {
-    translate?: (en: string, es: string) => string;
+    content: string;
   }
 
   interface LibraryItem {
@@ -224,19 +207,27 @@ interface LibraryItem {
             ))}
           </Tabs>
         </CardContent>
-      </Card>
-    )
-  }
-  section: string;
-  date: string;
-  time: string;
-  tags: string[];
+                  </Card>
+            )
+      }
+
+interface LibraryItem {
+      id: number;
+      title: string;
+      content: string;
+      section: string;
+      date: string;
+      time: string;
+      tags: string[];
 }
 
-export default function MyLibraryComponent({
-  translate: propTranslate,
-}: MyLibraryComponentProps) {
-  const translate = propTranslate || ((en: string) => en);
+interface MyLibraryComponentProps {
+      translate?: (en: string, es: string) => string;
+} 
+
+export const Component = ({
+      translate = (en: string, es: string) => en,
+}: MyLibraryComponentProps) => {
 
   const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([
     {
@@ -486,22 +477,76 @@ export default function MyLibraryComponent({
   ];
 
   return (
-    <Card className="w-full max-w-4xl mx-auto">
-      <CardHeader>
-        <CardTitle>{translate("My Library", "Mi Biblioteca")}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <p className="mb-4">
-          {translate("Manage your files.", "Administra tus archivos.")}
-        </p>
+    <div className="flex flex-col min-h-screen">
+    {/* <Card className="w-full max-w-4xl mx-auto"> */}
+  <CardHeader>
+    <CardTitle>{"My Library"}</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <p className="mb-4">
+      {"Manage your files."}
+    </p>
 
-        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mb-4">
-          <Input
-            placeholder={translate("File Title", "Título del Archivo")}
-            value={newItem.title}
-            onChange={(e) => setNewItem({ ...newItem, title: e.target.value })}
-            className="flex-grow"
-          />
+    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mb-4">
+      <Input
+        placeholder={"File Title"}
+        value={newItem.title}
+        onChange={(e) => setNewItem({ ...newItem, title: e.target.value })}
+        className="flex-grow"
+      />
+      <Input
+        placeholder={"Content"}
+        value={newItem.content}
+        onChange={(e) =>
+          setNewItem({ ...newItem, content: e.target.value })
+        }
+        className="flex-grow"
+      />
+      <select
+        value={newItem.section}
+        onChange={(e) =>
+          setNewItem({ ...newItem, section: e.target.value })
+        }
+        className="border rounded-md p-2"
+      >
+        {sections.map((section) => (
+          <option key={section} value={section}>
+            {section}
+          </option>
+        ))}
+      </select>
+    </div>
+  </CardContent>
+
+          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 mb-4">
+            <Input
+              placeholder={"File Title"}
+              value={newItem.title}
+              onChange={(e) => setNewItem({ ...newItem, title: e.target.value })}
+              className="flex-grow"
+            />
+            <Input
+              placeholder={"Content"}
+              value={newItem.content}
+              onChange={(e) =>
+                setNewItem({ ...newItem, content: e.target.value })
+              }
+              className="flex-grow"
+            />
+            <select
+              value={newItem.section}
+              onChange={(e) =>
+                setNewItem({ ...newItem, section: e.target.value })
+              }
+              className="border rounded-md p-2"
+            >
+              {sections.map((section) => (
+                <option key={section} value={section}>
+                  {section}
+                </option>
+              ))}
+            </select>
+            
           <Input
             placeholder={translate("Content", "Contenido")}
             value={newItem.content}
@@ -634,10 +679,9 @@ export default function MyLibraryComponent({
                     </div>
                   ))}
               </ScrollArea>
-            </TabsContent>
-          ))}
-        </Tabs>
-      </CardContent>
-    </Card>
-  );
-}
+        </TabsContent>
+        ))}
+      </Tabs>
+      </div>
+      );
+    }

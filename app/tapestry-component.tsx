@@ -15,7 +15,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@radix-ui/react-popover";
 import {
   Heart,
   MessageCircle,
@@ -23,8 +23,9 @@ import {
   Plus,
   ChevronLeft,
   ChevronRight,
+  Calendar,
 } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
+import { DayPicker } from "react-day-picker";
 import { cn } from "@/lib/utils";
 
 // Define the TranslateFunction type
@@ -89,26 +90,26 @@ function MoodTracker({ translate }: MoodTrackerProps) {
                 ? translate("Select Mood", "Seleccionar Estado de Ánimo")
                 : "Select Mood"}
             </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="multiple"
-              selected={selectedDates}
-              onSelect={handleSelect}
-              className="rounded-md border"
-              components={{
-                Day: ({ date, ...props }) => {
-                  const mood = getMoodForDate(date);
-                  return (
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={selectedDates}
+                  onSelect={handleSelect}
+                  className="rounded-md border"
+                  components={{
+                    Day: ({ date, ...dayProps }: { date: Date } & React.HTMLProps<HTMLButtonElement>) => {
+                      const mood = getMoodForDate(date);
+                      const isSelected = selectedDates.some(
+                        (selectedDate) => selectedDate.toDateString() === date.toDateString()
+                      );
+                      return (
                     <Button
-                      {...props}
+                      {...(dayProps as typeof Button)}
                       className={cn(
-                        props.className,
+                        dayProps.className,
                         "h-9 w-9",
-                        selectedDates.some(
-                          (selectedDate) =>
-                            selectedDate.toDateString() === date.toDateString(),
-                        ) && moodColors[mood as keyof typeof moodColors],
+                        isSelected && mood ? moodColors[mood as keyof typeof moodColors] : ""
                       )}
                     />
                   );
