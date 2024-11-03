@@ -7,9 +7,9 @@ import { Input } from "@/app/components/ui/input"
 import { ScrollArea } from "@/app/components/ui/scroll-area"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/ui/tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/app/components/ui/dialog"
-import { Plus, FileText, Trash2, Send, Calendar, Clock, Share2, FileUp } from 'lucide-react'
+import { Plus, Trash2, Send, Calendar, Clock, Share2, FileUp } from 'lucide-react'
 
-interface MyLibraryComponentProps {
+interface MyLibraryComponentps {
   translate?: (en: string, es: string) => string;
 }
 
@@ -23,7 +23,7 @@ interface LibraryItem {
   tags: string[];
 }
 
-export function MyLibraryComponentComponent({ translate: propTranslate }: MyLibraryComponentProps) {
+export function MyLibraryComponentComponent({ translate: propTranslate }: MyLibraryComponentps) {
   const translate = propTranslate || ((en: string) => en);
 
   const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([

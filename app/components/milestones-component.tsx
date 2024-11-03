@@ -2,9 +2,13 @@
 
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components/ui/card"
-import { Progress } from "@/app/components/ui/progress"
 import { Avatar, AvatarFallback, AvatarImage } from "@/app/components/ui/avatar"
 import { Trophy, Star, Podcast, FileText, UserPlus, Gift, TrendingUp, Share2 } from 'lucide-react'
+
+export interface MilestonesComponentProps {
+  addPoints: (amount: number) => void;
+  translate?: (en: string, es: string) => string;
+}
 
 interface Milestone {
   id: number
@@ -37,26 +41,21 @@ const topMoms: Mom[] = [
   { id: 3, name: "Jessica Brown", points: 410, avatar: "/placeholder.svg?height=32&width=32" },
 ]
 
-const getRankColor = (points: number) => {
-  if (points >= 500) return 'text-purple-600'
-  if (points >= 300) return 'text-blue-600'
-  if (points >= 100) return 'text-green-600'
-  return 'text-gray-600'
-}
-
 export function MilestonesComponent() {
-  const [milestones, setMilestones] = useState<Milestone[]>(initialMilestones)
-  const [totalPoints, setTotalPoints] = useState(250)
-  const [rank, setRank] = useState(4) // Assuming the user starts at rank 4
+  const [milestones] = useState<Milestone[]>(initialMilestones)
+  const [rank] = useState(1) // Assuming the user starts at rank 4
+  const [points, setTotalPoints] = useState(250) // Correct the useState declaration 
   const [progress, setProgress] = useState(0)
+  //const [language] = useState("en");
 
   useEffect(() => {
     const completed = milestones.filter(m => m.completed)
-    const points = completed.reduce((sum, m) => sum + m.points, 0)
-    setTotalPoints(points)
-    setProgress((completed.length / milestones.length) * 100)
-  }, [milestones])
-
+    const totalPoints = completed.reduce((sum, m) => sum + m.points, 0)
+    setTotalPoints(totalPoints)
+    
+    const progressValue = (completed.length / milestones.length) * 100
+    setProgress(progressValue)
+  }, [milestones, points])
   return (
     <Card className="w-full max-w-4xl mx-auto bg-purple-25">
       <CardHeader>
@@ -73,18 +72,9 @@ export function MilestonesComponent() {
             Rewards
           </h3>
           <p className="text-sm text-gray-600 mb-2">
-            You're halfway to earning a free month!
+            Progress: {progress}% You&apos;re halfway to earning a free month!
           </p>
-          <Progress value={50} className="w-full bg-gray-200">
-            <div
-              className="h-full bg-yellow-500 rounded-full transition-all duration-500 ease-in-out"
-              style={{ width: '50%' }}
-            />
-          </Progress>
-          <p className="text-sm text-gray-500 mt-1">
-            250 points earned. 250 more points to go!
-          </p>
-        </Card>
+          </Card>
 
         <div className="mb-6">
           <div className="flex justify-end items-center">
@@ -124,7 +114,7 @@ export function MilestonesComponent() {
                 <div className="flex items-center space-x-2">
                   <span className="font-bold text-lg">{index + 1}.</span>
                   <Avatar>
-                    <AvatarImage src={mom.avatar} alt={mom.name} />
+                    <AvatarImage src={mom.avatar} alt={mom.name} h-12 w-12 />
                     <AvatarFallback>{mom.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                   </Avatar>
                   <span>{mom.name}</span>

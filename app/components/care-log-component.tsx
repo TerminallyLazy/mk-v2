@@ -28,7 +28,13 @@ export function CareLogComponentComponent({ addPoints, translate: propTranslate 
   const [logEntries, setLogEntries] = useState<LogEntry[]>([])
 
   // Provide a default translate function if none is passed
-  const translate = propTranslate || ((en: string, es: string) => en);
+  const translate = React.useMemo(
+
+    () => propTranslate || ((en: string) => en),
+
+    [propTranslate]
+
+  );
 
   useEffect(() => {
     fetch('https://api.weather.gov/points/40.7128,-74.0060')

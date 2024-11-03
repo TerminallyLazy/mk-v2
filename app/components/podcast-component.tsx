@@ -1,15 +1,18 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components/ui/card"
 import { Button } from "@/app/components/ui/button"
-import { Slider } from "@/app/components/ui/slider"
-import { Input } from "@/app/components/ui/input"
 import { Textarea } from "@/app/components/ui/textarea"
 import { Label } from "@/app/components/ui/label"
-import { Play, Pause, SkipBack, SkipForward, Video, FileText, Home, Search, User, MoveRight } from 'lucide-react'
+import { Video, FileText, Home, Search, User, MoveRight } from 'lucide-react'
+import Image from "next/image";
 
-interface Podcast {
+interface PodcastProps {
+  translate: (en: string, es: string) => string;
+}
+
+interface PodcastItems {
   id: number
   title: string
   description: string
@@ -20,7 +23,7 @@ interface Podcast {
   textFile?: string
 }
 
-const initialPodcasts: Podcast[] = [
+const initialPodcasts: PodcastItems[] = [
   {
     id: 1,
     title: "Health Series with a Guide",
@@ -51,7 +54,7 @@ const initialPodcasts: Podcast[] = [
   }
 ]
 
-const suggestedPodcasts: Podcast[] = [
+const suggestedPodcasts: PodcastItems[] = [
   {
     id: 5,
     title: "Toddler Tantrums Tamed",
@@ -81,14 +84,14 @@ const suggestedPodcasts: Podcast[] = [
   }
 ]
 
-function translate(en: string, es: string): string {
-  // In a real application, this would be replaced with a proper translation function
-  return en
-}
+// function translate(en: string, es: string): string {
+//   // In a real application, this would be replaced with a proper translation function
+//   return en
+// }
 
-export function PodcastComponent() {
-  const [featuredPodcasts, setFeaturedPodcasts] = useState<Podcast[]>(initialPodcasts)
-  const [selectedPodcast, setSelectedPodcast] = useState<Podcast | null>(null)
+export function PodcastComponent({ translate }: PodcastProps) {
+  const [featuredPodcasts, setFeaturedPodcasts] = useState<PodcastItems[]>(initialPodcasts)
+  const [selectedPodcast, setSelectedPodcast] = useState<PodcastItems | null>(null)
   const [surveyResponses, setSurveyResponses] = useState({
     rating: 0,
     question2: '',
@@ -96,14 +99,22 @@ export function PodcastComponent() {
     futureTopics: ''
   })
 
-  const handleSelectPodcast = (podcast: Podcast) => {
+  const handleViewSelectedPodcast = React.useCallback(() => {
+    if (selectedPodcast) {
+      console.log('Viewing Podcast:', selectedPodcast.title)
+    }
+  }, [selectedPodcast])
+
+  useEffect(() => {
+    handleViewSelectedPodcast();
+  }, [handleViewSelectedPodcast]);
+
+  const handleSelectPodcast = (podcast: PodcastItems) => {
     setSelectedPodcast(podcast)
   }
 
-  const handleMovePodcast = (podcast: Podcast) => {
+  const handleMovePodcast = (podcast: PodcastItems) => {
     setFeaturedPodcasts(prev => [...prev, podcast])
-    const updatedSuggestions = suggestedPodcasts.filter(p => p.id !== podcast.id)
-    // In a real application, you would update the suggestedPodcasts state here
   }
 
   const handleSurveySubmit = (e: React.FormEvent) => {
@@ -131,7 +142,13 @@ export function PodcastComponent() {
               <div className="space-y-4">
                 {featuredPodcasts.map((podcast) => (
                   <Card key={podcast.id} className="flex items-center p-4 cursor-pointer hover:bg-gray-100" onClick={() => handleSelectPodcast(podcast)}>
-                    <img src={podcast.image} alt={podcast.title} className="w-16 h-16 rounded-md mr-4 object-cover" />
+                    <Image
+                    src={podcast.image}
+                    alt={podcast.title}
+                    width={64}
+                    height={64}
+                    className="rounded-md object-cover"
+                    />
                     <div className="flex-grow">
                       <h3 className="font-semibold">{podcast.title}</h3>
                       <p className="text-sm text-gray-500">{podcast.description}</p>
@@ -164,7 +181,13 @@ export function PodcastComponent() {
               <div className="space-y-4">
                 {suggestedPodcasts.map((podcast) => (
                   <Card key={podcast.id} className="flex items-center p-4">
-                    <img src={podcast.image} alt={podcast.title} className="w-12 h-12 rounded-md mr-3 object-cover" />
+                    <Image
+                    src={podcast.image}
+                    alt={podcast.title}
+                    width={64}
+                    height={64}
+                    className="rounded-md object-cover"
+                    />
                     <div className="flex-grow">
                       <h3 className="font-semibold text-sm">{podcast.title}</h3>
                       <p className="text-xs text-gray-500">{podcast.description}</p>
@@ -258,5 +281,5 @@ export function PodcastComponent() {
         </div>
       </footer>
     </div>
-  )
+  );
 }

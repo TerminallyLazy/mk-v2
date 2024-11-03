@@ -11,6 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/pop
 import { Heart, MessageCircle, X, Plus, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Calendar } from "@/app/components/ui/calendar"
 import { cn } from "@/lib/utils"
+import Image from "next/image";
 
 // Define the TranslateFunction type
 type TranslateFunction = (en: string, es: string) => string;
@@ -43,10 +44,6 @@ function MoodTracker({ translate }: MoodTrackerProps) {
     }
   }
 
-  const getMoodForDate = (date: Date) => {
-    return Math.floor(Math.random() * 5) + 1
-  }
-
   return (
     <Card className="mt-4">
       <CardHeader>
@@ -73,12 +70,13 @@ function MoodTracker({ translate }: MoodTrackerProps) {
               }}
               className="rounded-md border"
               components={{
-                Day: ({ date, ...props }) => {
-                  const mood = getMoodForDate(date)
+                Day: ({ date, ...props }: { date: Date } & { selectedMoods?: Record<string, string> }) => {
+                  const selectedMoods = props.selectedMoods || {};
+                  const mood = selectedMoods[date.toDateString()]
                   const isSelected = selectedDates.some(selectedDate => 
                     selectedDate.toDateString() === date.toDateString()
                   )
-                  const moodColor = isSelected ? moodColors[mood as keyof typeof moodColors] : ""
+                  const moodColor = isSelected ? moodColors[mood as unknown as keyof typeof moodColors] : ""
                   return (
                     <Button
                       {...props}
@@ -178,11 +176,11 @@ export function TapestryComponentComponent({ addPoints, translate }: TapestryCom
             {momsCommunity.map((mom) => (
               <div key={mom.id} className="relative">
                 <Avatar className="w-12 h-12">
-                  <AvatarImage src={mom.image} alt={mom.name} />
+                  <AvatarImage src={mom.image} alt={mom.name} h-12 w-12 />
                   <AvatarFallback>{mom.name[0]}</AvatarFallback>
                 </Avatar>
                 <button 
-                  className="absolute -top-1 -right-1 bg-red-500 rounded-full p-1"
+                  className="absolute -top-1 -right-1 h-6 w-6 bg-red-500 rounded-full p-1"
                   onClick={() => handleRemoveMom(mom.id)}
                 >
                   <X className="w-3 h-3 text-white" />
@@ -205,7 +203,13 @@ export function TapestryComponentComponent({ addPoints, translate }: TapestryCom
                 onClick={() => setActiveStory(index)}
               >
                 <CardContent className="p-4">
-                  <img src={story.image} alt={story.title} className="w-full h-32 object-cover mb-2 rounded" />
+                  <Image 
+                    src="/placeholder.svg"  // Removed the query parameters
+                    alt={story.title} 
+                    width={340}           // Added required width prop
+                    height={128}         // Added required height prop
+                    className="w-85 h-32 object-cover mb-2 rounded" 
+                  />
                   <h4 className="font-semibold">{story.title}</h4>
                   <p className="text-sm text-gray-600">{story.author}</p>
                 </CardContent>
