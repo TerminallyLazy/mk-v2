@@ -1,6 +1,5 @@
 "use client";
-
-import { Button } from "@/components/ui/button";
+import { Button } from "@/app/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,16 +7,16 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from "@/app/components/ui/card";
+import { Input } from "@/app/components/ui/input";
+import { ScrollArea } from "@/app/components/ui/scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/ui/tabs";
 import { ChevronLeft, ChevronRight, Send, Share2 } from "lucide-react";
-import Image from "next/image"; // error: Module '"next/image"' has no exported member 'Image'. Did you mean to use 'import Image from "next/image"' instead?
+import Image from "next/image"; 
 import React, { useCallback, useEffect, useState } from "react";
 type TranslateFunction = (en: string, es: string) => string;
 
-// Added custom marquee animation styles
+//Added custom marquee animation styles
 // const marqueeStyles = {
 //   animation: "marquee 20s linear infinite",
 //   "@keyframes marquee": {
@@ -279,10 +278,10 @@ function HomeComponent({
                   "Escribe tu pregunta aquí...",
                 )}
                 value={question}
-                onChange={(e) => setQuestion(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuestion(e.target.value)}
                 className="flex-grow"
               />
-              <Button type="submit" onClick={(e) => handleSubmit(e, "General")}>
+              <Button type="submit" onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleSubmit(e, "General")}>
                 <Send className="h-4 w-4" />
                 <span className="sr-only">{translate("Send", "Enviar")}</span>
               </Button>
@@ -293,7 +292,7 @@ function HomeComponent({
                 variant="outline"
                 size="sm"
                 className="px-2 py-1 text-xs"
-                onClick={(e) => handleSubmit(e, "Med Lookup")}
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleSubmit(e, "Med Lookup")}
               >
                 {translate("Med Lookup", "Búsqueda de Medicamentos")}
               </Button>
@@ -302,7 +301,7 @@ function HomeComponent({
                 variant="outline"
                 size="sm"
                 className="px-2 py-1 text-xs"
-                onClick={(e) => handleSubmit(e, "Mental & Behavioral Health")}
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleSubmit(e, "Mental & Behavioral Health")}
               >
                 {translate(
                   "Mental & Behavioral Health",
@@ -337,7 +336,7 @@ function HomeComponent({
                 "Compartir con amigo o familiar...",
               )}
               value={shareText}
-              onChange={(e) => setShareText(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setShareText(e.target.value)}
               className="w-64"
             />
             <Button type="submit">

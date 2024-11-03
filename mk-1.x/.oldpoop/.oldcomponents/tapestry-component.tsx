@@ -1,30 +1,32 @@
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "./ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@radix-ui/react-avatar";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
+} from "./ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import { Input } from "./ui/input";
+import { ScrollArea } from "./ui/scroll-area";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@radix-ui/react-popover";
+
 import {
   Heart,
   MessageCircle,
   X,
+  Date,
   Plus,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
+import { Calendar } from "@radix-ui/react-calendar";
 import { cn } from "@/lib/utils";
 
 // Define the TranslateFunction type
@@ -38,11 +40,16 @@ function MoodTracker({ translate }: MoodTrackerProps) {
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
 
   const moodColors = {
-    1: "bg-red-200",
-    2: "bg-orange-200",
-    3: "bg-yellow-200",
-    4: "bg-green-200",
-    5: "bg-blue-200",
+    1: "bg-red-500",
+    2: "bg-orange-500",
+    3: "bg-yellow-500",
+    4: "bg-green-500",    
+    5: "bg-blue-500",
+    6: "bg-red-200",
+    7: "bg-orange-200",
+    8: "bg-yellow-200",
+    9: "bg-green-200",
+    10: "bg-blue-200",
   };
 
   const handleSelect = (date: Date | undefined) => {
@@ -97,7 +104,7 @@ function MoodTracker({ translate }: MoodTrackerProps) {
               onSelect={handleSelect}
               className="rounded-md border"
               components={{
-                Day: ({ date, ...props }) => {
+                Day: ({ date,...props }: { date: Date } & React.HTMLAttributes<HTMLButtonElement>) => {
                   const mood = getMoodForDate(date);
                   return (
                     <Button
@@ -332,7 +339,6 @@ export default function TapestryComponent({
             {momsCommunity.map((mom) => (
               <div key={mom.id} className="relative">
                 <Avatar className="w-12 h-12">
-                  <AvatarImage src={mom.image} alt={mom.name} />
                   <AvatarFallback>{mom.name[0]}</AvatarFallback>
                 </Avatar>
                 <button

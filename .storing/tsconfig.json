@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "../mk-1.x/app/components/ui/button.tsx", "../mk-1.x/app/components/ui/card.tsx", "../mk-1.x/app/components/ui/input.tsx", "../mk-1.x/app/components/ui/label.tsx", "../mk-1.x/app/components/ui/scroll-area.tsx", "../mk-1.x/app/components/ui/slider.tsx", "../mk-1.x/app/components/ui/tabs.tsx", "../mk-1.x/app/components/ui/textarea.tsx"],
+  "exclude": ["node_modules"]
+}

@@ -1,16 +1,11 @@
 import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+
+import { ScrollArea } from "@radix-ui/react-scroll-area";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
+import { Dialog, DialogHeader, DialogContent, DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
 import {
   Plus,
   FileText,
@@ -22,42 +17,24 @@ import {
   FileUp,
 } from "lucide-react";
 
-interface MyLibraryComponentProps {
-  translate?: (en: string, es: string) => string;
-}
-
 interface LibraryItem {
   id: number;
   title: string;
-  content: string;import React, { useState } from 'react'
-  import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-  import { Button } from "@/components/ui/button"
-  import { Input } from "@/components/ui/input"
-  import { ScrollArea } from "@/components/ui/scroll-area"
-  import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-  import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-  import { Plus, FileText, Trash2, Send, Calendar, Clock, Share2, FileUp } from 'lucide-react'
+  content: string;
+  section: string;
+  date: string;
+  time: string;
+  tags: string[];
+}
 
-  interface MyLibraryComponentProps {
-    translate?: (en: string, es: string) => string;
-  }
+interface LibraryItemProps {
+  translate: (en: string) => string;
+}
 
-  interface LibraryItem {
-    id: number;
-    title: string;
-    content: string;
-    section: string;
-    date: string;
-    time: string;
-    tags: string[];
-  }
+export function LibraryItems({ translate: propTranslate }: LibraryItemProps) {
+  const translate = propTranslate || ((en: string) => en);
 
-  export default function MyLibraryComponent({ translate: propTranslate }: MyLibraryComponentProps) {
-    const translate = propTranslate || ((en: string) => en);
-
-    const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([
-      { id: 1, title: "Billie's Fever", content: "Billie had a fever of 101°F. Gave acetaminophen and monitored throughout the night. Fever broke by morning.", section: "Billie's Care Log", date: "2023-05-15", time: "20:30", tags: ["fever", "medication"] },
-      { id: 2, title: "Billie's Rash", content: "Noticed a small rash on Billie's arm. Applied hydrocortisone cream. Will monitor for changes.", section: "Billie's Care Log", date: "2023-05-20", time: "10:15", tags: ["rash", "skin"] },
+  const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([
       { id: 3, title: "Billie's First Steps", content: "Billie took his first steps today! He managed to walk three steps before sitting down.", section: "Billie's Care Log", date: "2023-06-01", time: "18:45", tags: ["milestone", "walking"] },
       { id: 4, title: "Billie's Teething", content: "Billie seems to be teething. Gums are swollen and he's drooling more than usual. Using teething ring for relief.", section: "Billie's Care Log", date: "2023-06-10", time: "14:20", tags: ["teething", "discomfort"] },
       { id: 5, title: "Megan's Vaccination", content: "Megan received her MMR vaccine. No immediate side effects observed. Will monitor for the next 48 hours.", section: "Megan's Care Log", date: "2023-06-01", time: "14:15", tags: ["vaccination", "MMR"] },
@@ -129,7 +106,7 @@ interface LibraryItem {
               className="border rounded-md p-2"
             >
               {sections.map((section) => (
-                <option key={section} value={section}>{translate(section, section)}</option>
+                <option key={section} value={section}>{translate(section)}</option>
               ))}
             </select>
             <Input
@@ -154,7 +131,7 @@ interface LibraryItem {
             <TabsList>
               {sections.map((section) => (
                 <TabsTrigger key={section} value={section}>
-                  {translate(section, section)}
+                  {translate(section)}
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -227,15 +204,11 @@ interface LibraryItem {
       </Card>
     )
   }
-  section: string;
-  date: string;
-  time: string;
-  tags: string[];
-}
+
 
 export default function MyLibraryComponent({
   translate: propTranslate,
-}: MyLibraryComponentProps) {
+}: LibraryItemProps) {
   const translate = propTranslate || ((en: string) => en);
 
   const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([
@@ -519,7 +492,7 @@ export default function MyLibraryComponent({
           >
             {sections.map((section) => (
               <option key={section} value={section}>
-                {translate(section, section)}
+                {translate(section)}
               </option>
             ))}
           </select>
@@ -545,7 +518,7 @@ export default function MyLibraryComponent({
           <TabsList>
             {sections.map((section) => (
               <TabsTrigger key={section} value={section}>
-                {translate(section, section)}
+                {translate(section)}
               </TabsTrigger>
             ))}
           </TabsList>
