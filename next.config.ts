@@ -1,20 +1,27 @@
-/** @type {import('next').NextConfig} */
+/** @type {import('next/config').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
   images: {
-    domains: ['moms-kidz-app.public.blob.vercel-storage.com'], // Add your image domains here
-  },
+    domains: ['moms-kidz-app.public.blob.vercel-storage.com']
+  }
 }
-
-
-// import type { NextConfig } from "next";
-
-// const nextConfig: NextConfig = {
-//   /* config options here */
-// };
-
-
 
 module.exports = nextConfig
 
-// export default nextConfig;
+
+
+
+
+
+
+
+
+
+
+
+// const nextConfig = {
+//   images: {
+//     domains: ['moms-kidz-app.public.blob.vercel-storage.com']
+//   }
+// }
+
+// module.exports = nextConfig
