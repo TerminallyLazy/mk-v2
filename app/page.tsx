@@ -4,11 +4,11 @@ import React from "react";
 import { Button } from "@/app/components/ui/button";
 import { Card, CardContent } from "@/app/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/ui/tabs";
-import { HomeComponent } from "@/app/components/home-component";
+import  HomeComponent  from "@/app/components/home-component";
 import { CareLogComponentComponent } from "@/app/components/care-log-component";
 import { MilestonesComponent } from "@/app/components/milestones-component";
 import { MyLibraryComponentComponent } from "@/app/components/my-library-component";
-import { TapestryComponentComponent } from "@/app/components/tapestry-component";
+import TapestryComponent from "@/app/components/tapestry-component";
 import { PodcastComponent } from "@/app/components/podcast-component";
 
 export default function Home() {
@@ -74,7 +74,7 @@ export default function Home() {
               </TabsContent>
               
               <TabsContent value="tapestry">
-                <TapestryComponentComponent addPoints={addPoints} translate={translate} />
+                <TapestryComponent addPoints={addPoints} translate={translate} />
               </TabsContent>
               
               <TabsContent value="carelog">

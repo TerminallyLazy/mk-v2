@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import React, { useState } from 'react'
 import { Button } from "@/app/components/ui/button"
@@ -8,10 +8,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/ui/ta
 import { Input } from "@/app/components/ui/input"
 import { ScrollArea } from "@/app/components/ui/scroll-area"
 import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover"
-import { Heart, MessageCircle, X, Plus, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Heart, MessageCircle, Plus, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Calendar } from "@/app/components/ui/calendar"
-import { cn } from "@/lib/utils"
-import Image from "next/image";
+import { cn } from "../../lib/utils"
 
 // Define the TranslateFunction type
 type TranslateFunction = (en: string, es: string) => string;
@@ -31,6 +30,19 @@ function MoodTracker({ translate }: MoodTrackerProps) {
     5: "bg-blue-200"
   }
 
+  // const handleSelect = (date: Date | undefined) => {
+  //   if (date) {
+  //     setSelectedDates(prev => {
+  //       const existing = prev.find(d => d.toDateString() === date.toDateString())
+  //       if (existing) {
+  //         return prev.filter(d => d.toDateString() !== date.toDateString())
+  //       } else {
+  //         return [...prev, date]
+  //       }
+  //     })
+  //   }
+  // }
+
   const handleSelect = (date: Date | undefined) => {
     if (date) {
       setSelectedDates(prev => {
@@ -42,6 +54,10 @@ function MoodTracker({ translate }: MoodTrackerProps) {
         }
       })
     }
+  }
+
+  const getMoodForDate = (date: Date) => {
+    return Math.floor(Math.random() * 5) + 1
   }
 
   return (
@@ -61,28 +77,24 @@ function MoodTracker({ translate }: MoodTrackerProps) {
             <Calendar
               mode="multiple"
               selected={selectedDates}
-              onSelect={(days) => {
-                if (Array.isArray(days)) {
-                  days.forEach(day => handleSelect(day));
-                } else if (days) {
-                  handleSelect(days);
+              onSelect={(dates: Date[] | undefined) => {
+                if (dates) {
+                  setSelectedDates(dates);
                 }
               }}
               className="rounded-md border"
               components={{
-                Day: ({ date, ...props }: { date: Date } & { selectedMoods?: Record<string, string> }) => {
-                  const selectedMoods = props.selectedMoods || {};
-                  const mood = selectedMoods[date.toDateString()]
-                  const isSelected = selectedDates.some(selectedDate => 
-                    selectedDate.toDateString() === date.toDateString()
-                  )
-                  const moodColor = isSelected ? moodColors[mood as unknown as keyof typeof moodColors] : ""
+                Day: ({ date, displayMonth, ...props }) => {
+                  const mood = getMoodForDate(date)
                   return (
                     <Button
-                      {...props}
+                      {...props} 
+                      variant="ghost"
                       className={cn(
                         "h-9 w-9",
-                        moodColor
+                        selectedDates.some(selectedDate => 
+                          selectedDate.toDateString() === date.toDateString()
+                        ) && moodColors[mood as keyof typeof moodColors]
                       )}
                     />
                   )
@@ -104,12 +116,25 @@ function MoodTracker({ translate }: MoodTrackerProps) {
   )
 }
 
+interface Mom {
+  id: number;
+  name: string;
+  email: string;
+  image: string;
+  children: {
+    name: string;
+    age: number;
+    diagnosis?: string;
+  }[];
+  interests: string[];
+}
+
 interface TapestryComponentProps {
   addPoints?: (amount: number) => void;
   translate?: TranslateFunction;
 }
 
-export function TapestryComponentComponent({ addPoints, translate }: TapestryComponentProps) {
+export default function TapestryComponent({ addPoints, translate }: TapestryComponentProps) {
   const [activeStory, setActiveStory] = useState(0);
   const [activeTab, setActiveTab] = useState("feed");
   const [carouselIndex, setCarouselIndex] = useState(0);
@@ -122,12 +147,52 @@ export function TapestryComponentComponent({ addPoints, translate }: TapestryCom
     { id: 6, author: "Rachel S.", content: translate ? translate("First day back at work after maternity leave. Mixed emotions!", "Primer día de vuelta al trabajo después de la baja por maternidad. ¡Emociones encontradas!") : "First day back at work after maternity leave. Mixed emotions!", likes: 45, comments: 10 },
   ]);
 
-  const [momsCommunity, setMomsCommunity] = useState([
-    { id: 1, name: "Anna", image: "/placeholder.svg?height=50&width=50" },
-    { id: 2, name: "Beth", image: "/placeholder.svg?height=50&width=50" },
-    { id: 3, name: "Cathy", image: "/placeholder.svg?height=50&width=50" },
-    { id: 4, name: "Diana", image: "/placeholder.svg?height=50&width=50" },
+  const [momsCommunity, setMomsCommunity] = useState<Mom[]>([
+    {
+      id: 1,
+      name: "Anna Smith",
+      email: "anna.smith@example.com",
+      image: "https://i.pravatar.cc/150?img=1",
+      children: [
+        { name: "Emma", age: 3, diagnosis: "Asthma" },
+        { name: "Liam", age: 1 }
+      ],
+      interests: ["Cooking", "Yoga", "Reading"]
+    },
+    {
+      id: 2,
+      name: "Beth Johnson",
+      email: "beth.johnson@example.com",
+      image: "https://i.pravatar.cc/150?img=2",
+      children: [
+        { name: "Oliver", age: 4 },
+        { name: "Sophia", age: 2, diagnosis: "Eczema" }
+      ],
+      interests: ["Gardening", "Photography", "Hiking"]
+    },
+    {
+      id: 3,
+      name: "Cathy Davis",
+      email: "cathy.davis@example.com",
+      image: "https://i.pravatar.cc/150?img=3",
+      children: [
+        { name: "Ethan", age: 5, diagnosis: "ADHD" }
+      ],
+      interests: ["Painting", "Swimming", "Volunteering"]
+    },
+    {
+      id: 4,
+      name: "Diana Wilson",
+      email: "diana.wilson@example.com",
+      image: "https://i.pravatar.cc/150?img=4",
+      children: [
+        { name: "Ava", age: 2 },
+        { name: "Noah", age: 4 }
+      ],
+      interests: ["Baking", "Cycling", "Meditation"]
+    },
   ]);
+
 
   const stories = [
     { id: 1, title: translate ? translate("Overcoming Picky Eating", "Superando la alimentación selectiva") : "Overcoming Picky Eating", author: translate ? translate("Nutritionist Dr. Smith", "Nutricionista Dra. Smith") : "Nutritionist Dr. Smith", image: "/placeholder.svg?height=100&width=100" },
@@ -147,7 +212,16 @@ export function TapestryComponentComponent({ addPoints, translate }: TapestryCom
   };
 
   const handleAddMom = () => {
-    const newMom = { id: momsCommunity.length + 1, name: `Mom ${momsCommunity.length + 1}`, image: "/placeholder.svg?height=50&width=50" };
+    const newMom: Mom = {
+      id: momsCommunity.length + 1,
+      name: `New Mom ${momsCommunity.length + 1}`,
+      email: `newmom${momsCommunity.length + 1}@example.com`,
+      image: `https://i.pravatar.cc/150?img=${momsCommunity.length + 5}`,
+      children: [
+        { name: `Child ${momsCommunity.length + 1}`, age: Math.floor(Math.random() * 5) + 1 }
+      ],
+      interests: ["Parenting", "Self-care", "Community"]
+    };
     setMomsCommunity([...momsCommunity, newMom]);
   };
 
@@ -163,8 +237,9 @@ export function TapestryComponentComponent({ addPoints, translate }: TapestryCom
     setCarouselIndex((prevIndex) => (prevIndex - 1 + Math.ceil(posts.length / 5)) % Math.ceil(posts.length / 5));
   };
 
+
   return (
-    <Card className="p-2 sm:p-4">
+    <Card className="p-2 sm:p-4 bg-[#E7E2F3]">
       <CardHeader>
         <CardTitle className="text-lg sm:text-xl">{translate ? translate("Tapestry", "Tapiz") : "Tapestry"}</CardTitle>
         <CardDescription className="text-sm sm:text-base">{translate ? translate("Connect with other moms and share your journey", "Conéctate con otras madres y comparte tu experiencia") : "Connect with other moms and share your journey"}</CardDescription>
@@ -174,18 +249,40 @@ export function TapestryComponentComponent({ addPoints, translate }: TapestryCom
           <h3 className="text-base sm:text-lg font-semibold mb-2">{translate ? translate("Mom's Community", "Comunidad de Madres") : "Mom's Community"}</h3>
           <div className="flex items-center space-x-2 overflow-x-auto pb-2">
             {momsCommunity.map((mom) => (
-              <div key={mom.id} className="relative">
-                <Avatar className="w-12 h-12">
-                  <AvatarImage src={mom.image} alt={mom.name} h-12 w-12 />
-                  <AvatarFallback>{mom.name[0]}</AvatarFallback>
-                </Avatar>
-                <button 
-                  className="absolute -top-1 -right-1 h-6 w-6 bg-red-500 rounded-full p-1"
-                  onClick={() => handleRemoveMom(mom.id)}
-                >
-                  <X className="w-3 h-3 text-white" />
-                </button>
-              </div>
+              <Popover key={mom.id}>
+                <PopoverTrigger asChild>
+                  <Avatar 
+                    className="w-12 h-12 cursor-pointer"
+                  >
+                    <AvatarImage src={mom.image} alt={mom.name} />
+                    <AvatarFallback>{mom.name[0]}</AvatarFallback>
+                  </Avatar>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 p-4">
+                  <div className="text-sm">
+                    <p className="font-bold">{mom.name}</p>
+                    <p>{mom.email}</p>
+                    <p className="mt-1 font-semibold">Children:</p>
+                    <ul className="list-disc list-inside">
+                      {mom.children.map((child, index) => (
+                        <li key={index}>
+                          {child.name} ({child.age} y/o)
+                          {child.diagnosis && ` - ${child.diagnosis}`}
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="mt-1 font-semibold">Interests:</p>
+                    <p>{mom.interests.join(", ")}</p>
+                    <Button 
+                      variant="link" 
+                      className="mt-2 p-0 h-auto text-red-500 hover:text-red-700"
+                      onClick={() => handleRemoveMom(mom.id)}
+                    >
+                      Remove from community
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
             ))}
             <Button variant="outline" size="icon" onClick={handleAddMom}>
               <Plus className="h-4 w-4" />
@@ -199,19 +296,13 @@ export function TapestryComponentComponent({ addPoints, translate }: TapestryCom
             {stories.map((story, index) => (
               <Card 
                 key={story.id} 
-                className={`flex-shrink-0 w-48 sm:w-64 cursor-pointer transition-all ${index === activeStory ? 'ring-2 ring-purple-500' : ''}`}
+                className={`flex-shrink-0 w-48 sm:w-64 cursor-pointer transition-all`}
                 onClick={() => setActiveStory(index)}
               >
                 <CardContent className="p-4">
-                  <Image 
-                    src="/placeholder.svg"  // Removed the query parameters
-                    alt={story.title} 
-                    width={340}           // Added required width prop
-                    height={128}         // Added required height prop
-                    className="w-85 h-32 object-cover mb-2 rounded" 
-                  />
+                  <img src={story.image} alt={story.title} className="w-full h-32 object-cover mb-2 rounded" />
                   <h4 className="font-semibold">{story.title}</h4>
-                  <p className="text-sm text-gray-600">{story.author}</p>
+                  <p  className="text-sm text-gray-600">{story.author}</p>
                 </CardContent>
               </Card>
             ))}
@@ -228,7 +319,7 @@ export function TapestryComponentComponent({ addPoints, translate }: TapestryCom
               <Plus className="w-4 h-4 mr-2" /> {translate ? translate("Create New Post", "Crear Nueva Publicación") : "Create New Post"}
             </Button>
             <div className="relative">
-              <div className="overflow-hidden">
+              <div className="overflow-hidden space-y-4">
                 {[...Array(Math.ceil(posts.length / 5))].map((_, pageIndex) => (
                   <div
                     key={pageIndex}
@@ -236,35 +327,38 @@ export function TapestryComponentComponent({ addPoints, translate }: TapestryCom
                     style={{ transform: `translateY(-${carouselIndex * 100}%)` }}
                   >
                     {posts.slice(pageIndex * 5, (pageIndex + 1) * 5).map(post => (
-                      <div key={post.id} className="flex items-center justify-between py-2 border-b last:border-b-0">
-                        <div className="flex items-center space-x-2">
-                          <Avatar className="w-8 h-8">
-                            <AvatarFallback>{post.author[0]}</AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="text-sm font-medium">{post.author}</p>
-                            <p className="text-xs text-gray-500">{post.content}</p>
+                      <Card key={post.id} className="mb-4 last:mb-0">
+                        <CardContent className="flex items-center justify-between py-2">
+                          <div className="flex items-center space-x-2">
+                            <Avatar className="w-8 h-8">
+                              <AvatarFallback>{post.author[0]}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="text-sm font-medium">{post.author}</p>
+                              <p className="text-xs text-gray-500">{post.content}</p>
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Button variant="ghost" size="sm" onClick={() => handleLike(post.id)}>
-                            <Heart className={`w-3 h-3 mr-1 ${post.likes > 0 ? 'fill-red-500' : ''}`} />
-                            <span className="text-xs">{post.likes}</span>
-                          </Button>
-                          <Button variant="ghost" size="sm">
-                            <MessageCircle className="w-3 h-3 mr-1" />
-                            <span className="text-xs">{post.comments}</span>
-                          </Button>
-                        </div>
-                      </div>
+                          <div className="flex items-center space-x-2">
+                            <Button variant="ghost" size="sm" onClick={() => handleLike(post.id)}>
+                              <Heart className={`w-3 h-3 mr-1 ${post.likes > 0 ? 'fill-red-500' : ''}`} />
+                              <span className="text-xs">{post.likes}</span>
+                            </Button>
+                            <Button variant="ghost" size="sm">
+                              <MessageCircle className="w-3 h-3 mr-1" />
+                              <span className="text-xs">{post.comments}</span>
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
                     ))}
                   </div>
                 ))}
               </div>
+              
               <Button
                 variant="outline"
                 size="icon"
-                className="absolute top-1/2 left-0 transform -translate-y-1/2  -translate-x-1/2"
+                className="absolute top-1/2 left-0 transform -translate-y-1/2 -translate-x-1/2"
                 onClick={prevSlide}
               >
                 <ChevronLeft className="h-4 w-4" />
