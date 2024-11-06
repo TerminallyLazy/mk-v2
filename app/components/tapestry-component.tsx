@@ -11,6 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/pop
 import { Heart, MessageCircle, Plus, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Calendar } from "@/app/components/ui/calendar"
 import { cn } from "../../lib/utils"
+import Image from "next/image"
 
 // Define the TranslateFunction type
 type TranslateFunction = (en: string, es: string) => string;
@@ -30,34 +31,8 @@ function MoodTracker({ translate }: MoodTrackerProps) {
     5: "bg-blue-200"
   }
 
-  // const handleSelect = (date: Date | undefined) => {
-  //   if (date) {
-  //     setSelectedDates(prev => {
-  //       const existing = prev.find(d => d.toDateString() === date.toDateString())
-  //       if (existing) {
-  //         return prev.filter(d => d.toDateString() !== date.toDateString())
-  //       } else {
-  //         return [...prev, date]
-  //       }
-  //     })
-  //   }
-  // }
-
-  const handleSelect = (date: Date | undefined) => {
-    if (date) {
-      setSelectedDates(prev => {
-        const existing = prev.find(d => d.toDateString() === date.toDateString())
-        if (existing) {
-          return prev.filter(d => d.toDateString() !== date.toDateString())
-        } else {
-          return [...prev, date]
-        }
-      })
-    }
-  }
-
   const getMoodForDate = (date: Date) => {
-    return Math.floor(Math.random() * 5) + 1
+    return ((date.getTime() % 5) + 1)
   }
 
   return (
@@ -84,7 +59,7 @@ function MoodTracker({ translate }: MoodTrackerProps) {
               }}
               className="rounded-md border"
               components={{
-                Day: ({ date, displayMonth, ...props }) => {
+                Day: ({ date, ...props }) => {
                   const mood = getMoodForDate(date)
                   return (
                     <Button
@@ -135,9 +110,9 @@ interface TapestryComponentProps {
 }
 
 export default function TapestryComponent({ addPoints, translate }: TapestryComponentProps) {
-  const [activeStory, setActiveStory] = useState(0);
   const [activeTab, setActiveTab] = useState("feed");
   const [carouselIndex, setCarouselIndex] = useState(0);
+  const [, setActiveStory] = useState<number | null>(null);
   const [posts, setPosts] = useState([
     { id: 1, author: "Sarah M.", content: translate ? translate("Just discovered a great way to make veggies fun for kids!", "¡Acabo de descubrir una excelente manera de hacer que las verduras sean divertidas para los niños!") : "Just discovered a great way to make veggies fun for kids!", likes: 15, comments: 2 },
     { id: 2, author: "Emily R.", content: translate ? translate("Any tips for dealing with toddler tantrums?", "¿Algún consejo para lidiar con las rabietas de los niños pequeños?") : "Any tips for dealing with toddler tantrums?", likes: 8, comments: 3 },
@@ -300,7 +275,7 @@ export default function TapestryComponent({ addPoints, translate }: TapestryComp
                 onClick={() => setActiveStory(index)}
               >
                 <CardContent className="p-4">
-                  <img src={story.image} alt={story.title} className="w-full h-32 object-cover mb-2 rounded" />
+                  <Image src={story.image} alt={story.title} className="w-full h-32 object-cover mb-2 rounded" />
                   <h4 className="font-semibold">{story.title}</h4>
                   <p  className="text-sm text-gray-600">{story.author}</p>
                 </CardContent>
