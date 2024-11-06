@@ -7,6 +7,12 @@ import { ScrollArea } from "@/app/components/ui/scroll-area"
 import { Send, Share2, Paperclip, Clock } from 'lucide-react'
 import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover"
 import Image from "next/image"
+import fruitsImage from "@/public/fruits.jpeg";
+import babyNappingImage from "@/public/babynapping.webp";
+import momWorkWithKidImage from "@/public/momworkwithkid.webp";
+import medMythImage from "@/public/medmyth.png";
+import momClappingWithKidImage from "@/public/momclappingwithkid.webp";
+
 
 type TranslateFunction = (en: string, es: string) => string;
 
@@ -116,7 +122,9 @@ const FeaturedStory: React.FC<{
       <Image 
         src={story.image}
         alt={translate(story.title, story.titleEs)} 
-        className="w-full h-[400px] object-cover mb-4" 
+        className="w-full h-[400px] object-cover mb-4"
+        width={800}
+        height={400}
       />
       <CardTitle className="text-xl mb-2">{translate(story.title, story.titleEs)}</CardTitle>
       <CardDescription className="mb-4">{translate(story.synopsis, story.synopsisEs)}</CardDescription>
@@ -151,7 +159,13 @@ const StoryList: React.FC<{
     {stories.map((story) => (
       <Card key={story.id} className="bg-white">
         <CardContent className="p-4 flex items-center space-x-4">
-          <Image src={story.image} alt={translate(story.title, story.titleEs)} className="w-1/3 h-24 object-cover" />
+          <Image 
+            src={story.image} 
+            alt={translate(story.title, story.titleEs)} 
+            className="w-1/3 h-24 object-cover"
+            width={200}
+            height={96}
+          />
           <div>
             <CardTitle className="text-sm mb-1">{translate(story.title, story.titleEs)}</CardTitle>
             <CardDescription className="text-xs">{translate(story.synopsis, story.synopsisEs)}</CardDescription>
@@ -203,12 +217,12 @@ export default function HomeComponent({ addPoints = () => {}, translate = defaul
   }
 
   const stories = [
-    { id: 1, title: "Mom's Innovative Approach to Picky Eating", titleEs: "Enfoque innovador de una madre para niños quisquillosos con la comida", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-PQ91run9XSTdqQeHkDjcZ9nlGvPHNj.jpeg", synopsis: "Learn how one mom transformed mealtime battles into fun food adventures.", synopsisEs: "Descubre cómo una madre transformó las batallas a la hora de comer en divertidas aventuras culinarias." },
-    { id: 2, title: "The Power of Positive Reinforcement", titleEs: "El poder del refuerzo positivo", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/DALL·E 2024-11-04 10.48.51 - A warm, colored image illustrating the concept of positive reinforcement. A mother is kneeling down, smiling and clapping her hands to celebrate her y-wanKBKxtdFZ9GJiNx5XuZ9HY8nhyPK.webp", synopsis: "Discover effective ways to encourage good behavior in children.", synopsisEs: "Descubre formas efectivas de fomentar el buen comportamiento en los niños." },
-    { id: 3, title: "Balancing Work and Motherhood", titleEs: "Equilibrando el trabajo y la maternidad", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/DALL·E 2024-11-04 10.48.43 - A vibrant, colored image depicting the work-life of a mother. The mother is sitting at a desk with a laptop, surrounded by work papers, while a baby s-iHgvIaRvGiKIfRsiqRCGQDrerDx7FD.webp", synopsis: "Tips from successful moms on managing career and family life.", synopsisEs: "Consejos de madres exitosas sobre cómo manejar la carrera y la vida familiar." },
-    { id: 4, title: "Creating a Safe Sleep Environment", titleEs: "Creando un ambiente seguro para dormir", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/DALL·E 2024-11-04 10.48.17 - A peaceful, colored image of a baby sleeping soundly in a cozy crib. The baby is wrapped in a soft blanket, with a gentle, warm light illuminating the-H2wNOCvlPCQSda8hjB4lWIvUo51WBY.webp", synopsis: "Expert advice on setting up the perfect nursery for your baby.", synopsisEs: "Consejos de expertos para preparar la habitación perfecta para tu bebé." },
-    { id: 5, title: "Medical Myths Debunked", titleEs: "Mitos médicos desmentidos", image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-ox7H2mHc49LJ7LplE2wWLwt4L3dybm.png", synopsis: "Separating fact from fiction in common medical beliefs about children's health.", synopsisEs: "Separando la realidad de la ficción en las creencias médicas comunes sobre la salud infantil." }
-  ]
+    { id: 1, title: "Mom's Innovative Approach to Picky Eating", titleEs: "Enfoque innovador de una madre para niños quisquillosos con la comida", image: fruitsImage, synopsis: "Learn how one mom transformed mealtime battles into fun food adventures.", synopsisEs: "Descubre cómo una madre transformó las batallas a la hora de comer en divertidas aventuras culinarias." },
+    { id: 2, title: "The Power of Positive Reinforcement", titleEs: "El poder del refuerzo positivo", image: momClappingWithKidImage, synopsis: "Discover effective ways to encourage good behavior in children.", synopsisEs: "Descubre formas efectivas de fomentar el buen comportamiento en los niños." },
+    { id: 3, title: "Balancing Work and Motherhood", titleEs: "Equilibrando el trabajo y la maternidad", image: momWorkWithKidImage, synopsis: "Tips from successful moms on managing career and family life.", synopsisEs: "Consejos de madres exitosas sobre cómo manejar la carrera y la vida familiar." },
+    { id: 4, title: "Creating a Safe Sleep Environment", titleEs: "Creando un ambiente seguro para dormir", image: babyNappingImage, synopsis: "Expert advice on setting up the perfect nursery for your baby.", synopsisEs: "Consejos de expertos para preparar la habitación perfecta para tu bebé." },
+    { id: 5, title: "Medical Myths Debunked", titleEs: "Mitos médicos desmentidos", image: medMythImage, synopsis: "Separating fact from fiction in common medical beliefs about children's health.", synopsisEs: "Separando la realidad de la ficción en las creencias médicas comunes sobre la salud infantil." }
+]
 
   const recentPosts = [
     { id: 1, title: "Understanding Childhood Vaccines", titleEs: "Entendiendo las vacunas infantiles", date: "2 hours ago", dateEs: "hace 2 horas" },
@@ -288,13 +302,22 @@ export default function HomeComponent({ addPoints = () => {}, translate = defaul
       </Card>
       <div className="flex flex-col md:flex-row gap-4">
         <FeaturedStory
-          story={stories[0]}
+          story={{
+            ...stories[0],
+            image: stories[0].image.src // Convert StaticImageData to string URL
+          }}
           translate={translate}
           handleShare={handleShare}
           shareText={shareText}
           setShareText={setShareText}
         />
-        <StoryList stories={stories.slice(1)} translate={translate} />
+        <StoryList 
+          stories={stories.map(story => ({
+            ...story,
+            image: story.image.src // Convert each story's StaticImageData to string URL
+          }))} 
+          translate={translate} 
+        />
       </div>
       <RecentPosts posts={recentPosts} translate={translate} />
     </div>

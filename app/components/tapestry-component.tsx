@@ -170,9 +170,30 @@ export default function TapestryComponent({ addPoints, translate }: TapestryComp
 
 
   const stories = [
-    { id: 1, title: translate ? translate("Overcoming Picky Eating", "Superando la alimentación selectiva") : "Overcoming Picky Eating", author: translate ? translate("Nutritionist Dr. Smith", "Nutricionista Dra. Smith") : "Nutritionist Dr. Smith", image: "/placeholder.svg?height=100&width=100" },
-    { id: 2, title: translate ? translate("Sleep Training Success", "Éxito en el entrenamiento del sueño") : "Sleep Training Success", author: translate ? translate("Sleep Coach Johnson", "Entrenadora de sueño Johnson") : "Sleep Coach Johnson", image: "/placeholder.svg?height=100&width=100" },
-    { id: 3, title: translate ? translate("Balancing Work and Family", "Equilibrando trabajo y familia") : "Balancing Work and Family", author: translate ? translate("Career Counselor Brown", "Consejera de carrera Brown") : "Career Counselor Brown", image: "/placeholder.svg?height=100&width=100" },
+    { 
+      id: 1, 
+      title: translate ? translate("Overcoming Picky Eating", "Superando la alimentación selectiva") : "Overcoming Picky Eating", 
+      author: translate ? translate("Nutritionist Dr. Smith", "Nutricionista Dra. Smith") : "Nutritionist Dr. Smith", 
+      image: "/placeholder.svg",
+      width: 100,
+      height: 100
+    },
+    { 
+      id: 2, 
+      title: translate ? translate("Sleep Training Success", "Éxito en el entrenamiento del sueño") : "Sleep Training Success", 
+      author: translate ? translate("Sleep Coach Johnson", "Entrenadora de sueño Johnson") : "Sleep Coach Johnson", 
+      image: "/placeholder.svg",
+      width: 100,
+      height: 100
+    },
+    { 
+      id: 3, 
+      title: translate ? translate("Balancing Work and Family", "Equilibrando trabajo y familia") : "Balancing Work and Family", 
+      author: translate ? translate("Career Counselor Brown", "Consejera de carrera Brown") : "Career Counselor Brown", 
+      image: "/placeholder.svg",
+      width: 100,
+      height: 100
+    },
   ];
 
   const handleNewPost = () => {
@@ -275,9 +296,15 @@ export default function TapestryComponent({ addPoints, translate }: TapestryComp
                 onClick={() => setActiveStory(index)}
               >
                 <CardContent className="p-4">
-                  <Image src={story.image} alt={story.title} className="w-full h-32 object-cover mb-2 rounded" />
+                  <Image 
+                    src={story.image} 
+                    alt={story.title} 
+                    width={story.width}
+                    height={story.height}
+                    className="w-full h-32 object-cover mb-2 rounded" 
+                  />
                   <h4 className="font-semibold">{story.title}</h4>
-                  <p  className="text-sm text-gray-600">{story.author}</p>
+                  <p className="text-sm text-gray-600">{story.author}</p>
                 </CardContent>
               </Card>
             ))}
