@@ -28,7 +28,6 @@ export function CareLogComponentComponent({ addPoints, translate: propTranslate 
   const [weather, setWeather] = useState('')
   const [activeChild, setActiveChild] = useState('Billie')
   const [logEntries, setLogEntries] = useState<LogEntry[]>([])
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   // Provide a default translate function if none is passed
@@ -78,7 +77,6 @@ export function CareLogComponentComponent({ addPoints, translate: propTranslate 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setSelectedImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result as string);
@@ -174,7 +172,6 @@ export function CareLogComponentComponent({ addPoints, translate: propTranslate 
                     variant="ghost"
                     size="sm"
                     onClick={() => {
-                      setSelectedImage(null);
                       setImagePreview(null);
                     }}
                     className="mt-2"

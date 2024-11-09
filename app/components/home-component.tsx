@@ -1,20 +1,15 @@
 "use client";
-import React, { useState, useCallback } from 'react'
+import React, { useState } from 'react'
 import { Button } from "@/app/components/ui/button"
 import { Input } from "@/app/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components/ui/card"
 import { ScrollArea } from "@/app/components/ui/scroll-area"
-import { Send, Share2, Paperclip, Clock } from 'lucide-react'
-import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover"
+import { Send } from 'lucide-react'
 import Image from "next/image"
-import fruitsImage from "@/public/fruits.jpeg";
-import babyNappingImage from "@/public/babynapping.webp";
-import momWorkWithKidImage from "@/public/momworkwithkid.webp";
-import medMythImage from "@/public/medmyth.png";
 import momClappingWithKidImage from "@/public/momclappingwithkid.webp";
-import useTheme from "next-themes"
-import mkLogo from "@/public/mklogo.png";
-
+import momWorkWithKidImage from "@/public/momworkwithkid.webp";
+import babyNappingImage from "@/public/babynapping.webp";
+import medMythImage from "@/public/medmyth.png";
 
 type TranslateFunction = (en: string, es: string) => string;
 
@@ -31,206 +26,15 @@ interface ChatMessage {
   sources?: string[];
 }
 
-const QuestionForm: React.FC<{
-  question: string;
-  setQuestion: React.Dispatch<React.SetStateAction<string>>;
-  handleSubmit: (e: React.FormEvent, type: string) => void;
-  translate: TranslateFunction;
-}> = ({ question, setQuestion, handleSubmit, translate }) => {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleQuestionSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      const response = await fetch('/api/openai', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          messages: [
-            {
-              role: 'user',
-              content: question
-            }
-          ]
-        })
-      });
-
-      await response.json();
-      handleSubmit(e, 'General');
-    } catch (error) {
-      console.error('Error calling OpenAI:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <form className="space-y-2" onSubmit={handleQuestionSubmit}>
-      <div className="flex space-x-2">
-        <Input 
-          placeholder={translate("Type your question here...", "Escribe tu pregunta aquí...")}
-          value={question} 
-          onChange={(e) => setQuestion(e.target.value)}
-          className="flex-grow"
-          disabled={isLoading}
-        />
-        <Button type="submit" disabled={isLoading}>
-          <Send className="h-4 w-4" />
-          <span className="sr-only">{translate("Send", "Enviar")}</span>
-        </Button>
-      </div>
-    </form>
-  );
-};
-
-const SourcesList: React.FC<{ translate: TranslateFunction }> = ({ translate }) => (
-  <div className="mt-2 p-2 bg-gray-100 rounded-md">
-    <h4 className="font-semibold mb-1">{translate("Sources:", "Fuentes:")}</h4>
-    <ul className="list-disc list-inside text-sm">
-      <li>{translate("American Academy of Pediatrics", "Academia Americana de Pediatría")}</li>
-      <li>{translate("World Health Organization", "Organización Mundial de la Salud")}</li>
-      <li>{translate("Centers for Disease Control and Prevention", "Centros para el Control y la Prevención de Enfermedades")}</li>
-    </ul>
-  </div>
-);
-
-const MedicationLookup: React.FC<{
-  translate: TranslateFunction;
-  handleSubmit: (e: React.FormEvent, type: string) => void;
-}> = ({ translate, handleSubmit }) => (
-  <Popover>
-    <PopoverTrigger asChild>
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        className="px-2 py-1 text-xs"
-      >
-        {translate("Med Lookup", "Búsqueda de Medicamentos")}
-      </Button>
-    </PopoverTrigger>
-    <PopoverContent className="w-80">
-      <div className="grid gap-4">
-        <div className="space-y-2">
-          <h4 className="font-medium leading-none">{translate("Medication Lookup", "Búsqueda de Medicamentos")}</h4>
-          <p className="text-sm text-muted-foreground">
-            {translate("Please upload a photo of the medication bottle, and I'll provide information on its use, dosage, and other relevant details.", "Por favor, sube una foto del frasco del medicamento y te proporcionaré información sobre su uso, dosis y otros detalles relevantes.")}
-          </p>
-        </div>
-        <div className="grid gap-2">
-          <div className="grid grid-cols-3 items-center gap-4">
-            <Button size="sm" className="w-full col-span-2" onClick={() => document.getElementById('med-photo-upload')?.click()}>
-              <Paperclip className="h-4 w-4 mr-2" />
-              {translate("Add Photo", "Agregar Foto")}
-            </Button>
-            <input
-              id="med-photo-upload"
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                console.log('File uploaded:', e.target.files?.[0]?.name)
-              }}
-            />
-          </div>
-          <Button size="sm" className="w-full" onClick={(e) => handleSubmit(e, 'Med Lookup')}>
-            {translate("Search", "Buscar")}
-          </Button>
-        </div>
-      </div>
-    </PopoverContent>
-  </Popover>
-);
-
-const FeaturedStory: React.FC<{
-  story: {
-    title: string;
-    titleEs: string;
-    image: string;
-    synopsis: string;
-    synopsisEs: string;
-  };
-  translate: TranslateFunction;
-  handleShare: (e: React.FormEvent) => void;
-  shareText: string;
-  setShareText: React.Dispatch<React.SetStateAction<string>>;
-}> = ({ story, translate, handleShare, shareText, setShareText }) => (
-  <Card className="bg-card dark:bg-card border-border">
-    <CardContent className="p-4 flex flex-col space-y-4">
-      <Image 
-        src={story.image}
-        alt={translate(story.title, story.titleEs)} 
-        className="w-full h-[400px] object-cover mb-4 rounded-lg shadow-md"
-        width={800}
-        height={400}
-      />
-      <CardTitle className="text-xl mb-2 text-card-foreground">
-        {translate(story.title, story.titleEs)}
-      </CardTitle>
-      <CardDescription className="mb-4 text-muted-foreground">
-        {translate(story.synopsis, story.synopsisEs)}
-      </CardDescription>
-      <form onSubmit={handleShare} className="flex space-x-2">
-        <Input 
-          placeholder={translate("Share with friend or family...", "Compartir con amigo o familiar...")}
-          value={shareText} 
-          onChange={(e) => setShareText(e.target.value)}
-          className="flex-grow bg-background dark:bg-background text-foreground border-input"
-        />
-        <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground">
-          <Share2 className="h-4 w-4 mr-2" />
-          {translate("Share", "Compartir")}
-        </Button>
-      </form>
-    </CardContent>
-  </Card>
-);
-
-const StoryList: React.FC<{
-  stories: Array<{
-    id: number;
-    title: string;
-    titleEs: string;
-    image: string;
-    synopsis: string;
-    synopsisEs: string;
-  }>;
-  translate: TranslateFunction;
-}> = ({ stories, translate }) => (
-  <div className="md:w-1/3 space-y-4">
-    {stories.map((story) => (
-      <Card key={story.id} className="bg-card dark:bg-card hover:bg-accent/50 dark:hover:bg-accent/50 transition-colors duration-200 border-border">
-        <CardContent className="p-4 flex items-center space-x-4">
-          <Image 
-            src={story.image} 
-            alt={translate(story.title, story.titleEs)} 
-            className="w-1/3 h-24 object-cover rounded-md shadow-sm"
-            width={200}
-            height={96}
-          />
-          <div>
-            <CardTitle className="text-sm mb-1 text-card-foreground">
-              {translate(story.title, story.titleEs)}
-            </CardTitle>
-            <CardDescription className="text-xs text-muted-foreground">
-              {translate(story.synopsis, story.synopsisEs)}
-            </CardDescription>
-          </div>
-        </CardContent>
-      </Card>
-    ))}
-  </div>
-);
+interface RequestBody {
+  prompt: string;
+  type: string;
+  image?: string;
+}
 
 export default function HomeComponent({ addPoints = () => {}, translate = defaultTranslate }: HomeComponentProps) {
   const [question, setQuestion] = useState('')
   const [conversation, setConversation] = useState<ChatMessage[]>([]);
-  const [shareText, setShareText] = useState('')
   const [showSources, setShowSources] = useState(false)
   const [medImage, setMedImage] = useState<File | null>(null);
 
@@ -250,30 +54,26 @@ export default function HomeComponent({ addPoints = () => {}, translate = defaul
     e.preventDefault();
     if (!question.trim() && !medImage) return;
 
-    // Add user message to conversation immediately
     setConversation(prev => [...prev, { 
       role: 'user', 
       content: `[${type}] ${question}` 
     }]);
 
     try {
-      // Prepare request body
-      const requestBody: any = {
+      const requestBody: RequestBody = {
         prompt: question,
         type
       };
 
-      // Add image data if it's a medication lookup
       if (type === 'Med Lookup' && medImage) {
         const reader = new FileReader();
-        const imageData = await new Promise((resolve) => {
-          reader.onloadend = () => resolve(reader.result);
+        const imageData = await new Promise<string>((resolve) => {
+          reader.onloadend = () => resolve(reader.result as string);
           reader.readAsDataURL(medImage);
         });
         requestBody.image = imageData;
       }
 
-      // Call the API
       const response = await fetch('/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -284,19 +84,16 @@ export default function HomeComponent({ addPoints = () => {}, translate = defaul
 
       const data = await response.json();
 
-      // Update conversation with AI response
       setConversation(prev => [...prev, { 
         role: 'assistant', 
         content: data.text,
         sources: data.sources || []
       }]);
 
-      // Show sources if available
       if (data.sources?.length) {
         setShowSources(true);
       }
 
-      // Clear input and award points
       setQuestion('');
       setMedImage(null);
       if (addPoints) addPoints(5);
@@ -311,20 +108,10 @@ export default function HomeComponent({ addPoints = () => {}, translate = defaul
     }
   };
 
-  const handleShare = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (shareText.trim()) {
-      console.log(`Sharing "${shareText}" with friend or family member`)
-      setShareText('')
-      addPoints(5)
-    }
-  }
-
   const handleMedImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setMedImage(file);
-      // Here you would typically handle the image upload and analysis
       handleSubmit(e, 'Med Lookup');
     }
   };
