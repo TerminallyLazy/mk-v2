@@ -8,10 +8,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/ui/ta
 import { Input } from "@/app/components/ui/input"
 import { ScrollArea } from "@/app/components/ui/scroll-area"
 import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/ui/popover"
-import { Heart, MessageCircle, Plus, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Heart, MessageCircle, Plus, ChevronLeft, ChevronRight, Image as ImageIcon, X } from 'lucide-react'
 import { Calendar } from "@/app/components/ui/calendar"
 import { cn } from "../../lib/utils"
 import Image from "next/image"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/app/components/ui/dialog"
+import { Textarea } from "@/app/components/ui/textarea"
 
 // Define the TranslateFunction type
 type TranslateFunction = (en: string, es: string) => string;
@@ -49,33 +51,25 @@ function MoodTracker({ translate }: MoodTrackerProps) {
             <Button variant="outline">{translate ? translate("Select Mood", "Seleccionar Estado de Ánimo") : "Select Mood"}</Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="multiple"
-              selected={selectedDates}
-              onSelect={(dates: Date[] | undefined) => {
-                if (dates) {
-                  setSelectedDates(dates);
-                }
-              }}
-              className="rounded-md border"
-              components={{
-                Day: ({ date, ...props }) => {
-                  const mood = getMoodForDate(date)
-                  return (
-                    <Button
-                      {...props} 
-                      variant="ghost"
-                      className={cn(
-                        "h-9 w-9",
-                        selectedDates.some(selectedDate => 
-                          selectedDate.toDateString() === date.toDateString()
-                        ) && moodColors[mood as keyof typeof moodColors]
-                      )}
-                    />
-                  )
-                },
-              }}
-            />
+            <div className="rounded-md border">
+              <Calendar
+                mode="multiple"
+                selected={selectedDates}
+                onSelect={(dates) => dates && setSelectedDates(dates)}
+                initialFocus
+                numberOfMonths={1}
+                fixedWeeks
+                showOutsideDays={false}
+                classNames={{
+                  day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+                  day_today: "bg-accent text-accent-foreground",
+                  day: cn(
+                    "h-9 w-9 p-0 font-normal",
+                    selectedDates.length > 0 && "aria-selected:opacity-100"
+                  ),
+                }}
+              />
+            </div>
           </PopoverContent>
         </Popover>
         <div className="mt-4 flex justify-between">
@@ -174,7 +168,7 @@ export default function TapestryComponent({ addPoints, translate }: TapestryComp
       id: 1, 
       title: translate ? translate("Overcoming Picky Eating", "Superando la alimentación selectiva") : "Overcoming Picky Eating", 
       author: translate ? translate("Nutritionist Dr. Smith", "Nutricionista Dra. Smith") : "Nutritionist Dr. Smith", 
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d",
       width: 100,
       height: 100
     },
@@ -182,7 +176,7 @@ export default function TapestryComponent({ addPoints, translate }: TapestryComp
       id: 2, 
       title: translate ? translate("Sleep Training Success", "Éxito en el entrenamiento del sueño") : "Sleep Training Success", 
       author: translate ? translate("Sleep Coach Johnson", "Entrenadora de sueño Johnson") : "Sleep Coach Johnson", 
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1535571393765-ea44927160be",
       width: 100,
       height: 100
     },
@@ -190,11 +184,18 @@ export default function TapestryComponent({ addPoints, translate }: TapestryComp
       id: 3, 
       title: translate ? translate("Balancing Work and Family", "Equilibrando trabajo y familia") : "Balancing Work and Family", 
       author: translate ? translate("Career Counselor Brown", "Consejera de carrera Brown") : "Career Counselor Brown", 
-      image: "/placeholder.svg",
+      image: "https://images.unsplash.com/photo-1484863137850-59afcfe05386",
       width: 100,
       height: 100
     },
   ];
+
+  const [isCreatingPost, setIsCreatingPost] = useState(false);
+  const [newPost, setNewPost] = useState({
+    content: '',
+    image: null as File | null,
+    imagePreview: null as string | null
+  });
 
   const handleNewPost = () => {
     if (addPoints) addPoints(10);
@@ -235,14 +236,16 @@ export default function TapestryComponent({ addPoints, translate }: TapestryComp
 
 
   return (
-    <Card className="p-2 sm:p-4 bg-[#E7E2F3]">
+    <Card className="p-2 sm:p-4 bg-background dark:bg-background">
       <CardHeader>
-        <CardTitle className="text-lg sm:text-xl">{translate ? translate("Tapestry", "Tapiz") : "Tapestry"}</CardTitle>
-        <CardDescription className="text-sm sm:text-base">{translate ? translate("Connect with other moms and share your journey", "Conéctate con otras madres y comparte tu experiencia") : "Connect with other moms and share your journey"}</CardDescription>
+        <CardTitle className="text-lg sm:text-xl text-foreground">Tapestry</CardTitle>
+        <CardDescription className="text-sm sm:text-base text-muted-foreground">
+          Connect with other moms and share your journey
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="mb-4">
-          <h3 className="text-base sm:text-lg font-semibold mb-2">{translate ? translate("Mom's Community", "Comunidad de Madres") : "Mom's Community"}</h3>
+          <h3 className="text-base sm:text-lg font-semibold mb-2 text-foreground">Mom's Community</h3>
           <div className="flex items-center space-x-2 overflow-x-auto pb-2">
             {momsCommunity.map((mom) => (
               <Popover key={mom.id}>
@@ -287,13 +290,12 @@ export default function TapestryComponent({ addPoints, translate }: TapestryComp
         </div>
         
         <div className="mb-4">
-          <h3 className="text-base sm:text-lg font-semibold mb-2">{translate ? translate("Featured Stories", "Historias Destacadas") : "Featured Stories"}</h3>
+          <h3 className="text-base sm:text-lg font-semibold mb-2 text-foreground">Featured Stories</h3>
           <div className="flex space-x-2 sm:space-x-4 overflow-x-auto pb-2">
-            {stories.map((story, index) => (
+            {stories.map((story) => (
               <Card 
                 key={story.id} 
-                className={`flex-shrink-0 w-48 sm:w-64 cursor-pointer transition-all`}
-                onClick={() => setActiveStory(index)}
+                className="flex-shrink-0 w-48 sm:w-64 cursor-pointer transition-all bg-card dark:bg-card hover:bg-accent dark:hover:bg-accent"
               >
                 <CardContent className="p-4">
                   <Image 
@@ -312,14 +314,97 @@ export default function TapestryComponent({ addPoints, translate }: TapestryComp
         </div>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="feed">{translate ? translate("Feed", "Noticias") : "Feed"}</TabsTrigger>
-            <TabsTrigger value="community">{translate ? translate("Community", "Comunidad") : "Community"}</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 bg-muted dark:bg-muted">
+            <TabsTrigger value="feed" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              Feed
+            </TabsTrigger>
+            <TabsTrigger value="community" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              Community
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="feed">
-            <Button onClick={handleNewPost} className="w-full mb-4">
-              <Plus className="w-4 h-4 mr-2" /> {translate ? translate("Create New Post", "Crear Nueva Publicación") : "Create New Post"}
-            </Button>
+            <Dialog open={isCreatingPost} onOpenChange={setIsCreatingPost}>
+              <DialogTrigger asChild>
+                <Button className="w-full mb-4">
+                  <Plus className="w-4 h-4 mr-2" /> Create New Post
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-card dark:bg-card border-border">
+                <DialogHeader>
+                  <DialogTitle>Create New Post</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <Textarea
+                    placeholder="What's on your mind?"
+                    value={newPost.content}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewPost({ ...newPost, content: e.target.value })}
+                    className="min-h-[100px] bg-background dark:bg-background"
+                  />
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => document.getElementById('post-image')?.click()}
+                      className="bg-background dark:bg-background"
+                    >
+                      <ImageIcon className="h-4 w-4 mr-2" />
+                      Add Image
+                    </Button>
+                    <input
+                      id="post-image"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            setNewPost({
+                              ...newPost,
+                              image: file,
+                              imagePreview: reader.result as string
+                            });
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                  </div>
+                  {newPost.imagePreview && (
+                    <div className="relative">
+                      <Image
+                        src={newPost.imagePreview}
+                        alt="Post preview"
+                        width={300}
+                        height={200}
+                        className="rounded-md object-cover"
+                      />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-2 right-2"
+                        onClick={() => setNewPost({ ...newPost, image: null, imagePreview: null })}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
+                  <div className="flex justify-end gap-2">
+                    <Button variant="outline" onClick={() => setIsCreatingPost(false)}>
+                      Cancel
+                    </Button>
+                    <Button onClick={() => {
+                      // Handle post creation
+                      handleNewPost();
+                      setIsCreatingPost(false);
+                      setNewPost({ content: '', image: null, imagePreview: null });
+                    }}>
+                      Post
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
             <div className="relative">
               <div className="overflow-hidden space-y-4">
                 {[...Array(Math.ceil(posts.length / 5))].map((_, pageIndex) => (
