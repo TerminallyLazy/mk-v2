@@ -27,12 +27,12 @@ interface Mom {
 }
 
 const initialMilestones: Milestone[] = [
-  { id: 1, title: "Listen to a Podcast", description: "Complete a full podcast episode", completed: false, points: 10, icon: <Podcast className="h-5 w-5" /> },
-  { id: 2, title: "Add to Care Log", description: "Record a new entry in your care log", completed: false, points: 5, icon: <FileText className="h-5 w-5" /> },
-  { id: 3, title: "Complete a Survey", description: "Provide feedback through a survey", completed: false, points: 15, icon: <Star className="h-5 w-5" /> },
-  { id: 4, title: "Onboard New Child", description: "Add a new child to your profile", completed: false, points: 20, icon: <UserPlus className="h-5 w-5" /> },
-  { id: 5, title: "Invite a Friend", description: "Bring a new mother into the community", completed: false, points: 25, icon: <UserPlus className="h-5 w-5" /> },
-  { id: 6, title: "Share Your Story", description: "Share a personal story with the community", completed: false, points: 20, icon: <Share2 className="h-5 w-5" /> },
+  { id: 1, title: "Listen to a Podcast", description: "Complete a full podcast episode", completed: false, points: 10, icon: <Podcast className="h-5 w-5 text-foreground" /> },
+  { id: 2, title: "Add to Care Log", description: "Record a new entry in your care log", completed: false, points: 5, icon: <FileText className="h-5 w-5 text-foreground" /> },
+  { id: 3, title: "Complete a Survey", description: "Provide feedback through a survey", completed: false, points: 15, icon: <Star className="h-5 w-5 text-foreground" /> },
+  { id: 4, title: "Onboard New Child", description: "Add a new child to your profile", completed: false, points: 20, icon: <UserPlus className="h-5 w-5 text-foreground" /> },
+  { id: 5, title: "Invite a Friend", description: "Bring a new mother into the community", completed: false, points: 25, icon: <UserPlus className="h-5 w-5 text-foreground" /> },
+  { id: 6, title: "Share Your Story", description: "Share a personal story with the community", completed: false, points: 20, icon: <Share2 className="h-5 w-5 text-foreground" /> },
 ]
 
 const topMoms: Mom[] = [
@@ -61,14 +61,14 @@ export function MilestonesComponent() {
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           <span>Mom Achievements</span>
-          <Trophy className="h-10 w-10 text-yellow-500" />
+          <Trophy className="h-10 w-10 text-yellow-500 dark:text-yellow-400" />
         </CardTitle>
         <CardDescription>Track your progress and earn rewards</CardDescription>
       </CardHeader>
       <CardContent>
         <Card className="p-4 mb-6">
           <h3 className="font-semibold mb-2 flex items-center">
-            <Gift className="h-6 w-6 mr-2 text-yellow-500" />
+            <Gift className="h-6 w-6 mr-2 text-yellow-500 dark:text-yellow-400" />
             Rewards
           </h3>
           <p className="text-sm text-gray-600 mb-2">
@@ -84,10 +84,14 @@ export function MilestonesComponent() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           {milestones.map((milestone) => (
-            <Card key={milestone.id} className={`p-4 ${milestone.completed ? 'bg-green-50' : ''}`}>
+            <Card key={milestone.id} className={`p-4 ${milestone.completed ? 'bg-green-50 dark:bg-green-900/20' : ''}`}>
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className={`p-2 rounded-full ${milestone.completed ? 'bg-green-500' : 'bg-gray-200'}`}>
+                  <div className={`p-2 rounded-full ${
+                    milestone.completed 
+                      ? 'bg-green-500 text-white' 
+                      : 'bg-gray-200 dark:bg-gray-700 text-foreground'
+                  }`}>
                     {milestone.icon}
                   </div>
                   <div>
@@ -105,7 +109,7 @@ export function MilestonesComponent() {
 
         <Card className="p-4 mb-6">
           <h3 className="font-semibold mb-2 flex items-center">
-            <Trophy className="h-6 w-6 mr-2 text-yellow-500" />
+            <Trophy className="h-6 w-6 mr-2 text-yellow-500 dark:text-yellow-400" />
             Top Moms This Month
           </h3>
           <div className="space-y-2">
@@ -127,7 +131,7 @@ export function MilestonesComponent() {
 
         <Card className="p-4">
           <h3 className="font-semibold mb-2 flex items-center">
-            <TrendingUp className="h-6 w-6 mr-2 text-green-500" />
+            <TrendingUp className="h-6 w-6 mr-2 text-green-500 dark:text-green-400" />
             Boost Your Points
           </h3>
           <ul className="list-disc list-inside space-y-2 text-sm text-gray-600">

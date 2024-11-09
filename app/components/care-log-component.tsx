@@ -6,7 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app
 import { Input } from "@/app/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/ui/tabs"
 import { ScrollArea } from "@/app/components/ui/scroll-area"
-import { Camera, CloudSun, Calendar } from 'lucide-react'
+import { Camera, CloudSun, Calendar, Clock } from 'lucide-react'
+import Image from 'next/image'
+import { X } from 'lucide-react'
 
 interface CareLogComponentProps {
   addPoints?: (amount: number) => void;
@@ -26,6 +28,7 @@ export function CareLogComponentComponent({ addPoints, translate: propTranslate 
   const [weather, setWeather] = useState('')
   const [activeChild, setActiveChild] = useState('Billie')
   const [logEntries, setLogEntries] = useState<LogEntry[]>([])
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   // Provide a default translate function if none is passed
   const translate = React.useMemo(
@@ -71,6 +74,17 @@ export function CareLogComponentComponent({ addPoints, translate: propTranslate 
 
   const children = ['Billie', 'Megan']
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <Card className="p-2 sm:p-4">
       <CardHeader>
@@ -101,26 +115,72 @@ export function CareLogComponentComponent({ addPoints, translate: propTranslate 
                   <span>{translate("Current weather:", "Clima actual:")} {translate(weather, weather)}</span>
                 </div>
                 <div className="flex space-x-2">
-                  <Button type="button" variant="outline">
+                  <Button 
+                    onClick={() => document.getElementById('care-log-photo')?.click()} 
+                    variant="outline"
+                    className="bg-background dark:bg-background"
+                  >
                     <Camera className="h-4 w-4 mr-2" />
-                    {translate("Add Photo", "Agregar Foto")}
+                    Add Photo
                   </Button>
+                  <input
+                    id="care-log-photo"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageUpload}
+                  />
                   <Button type="submit">{translate("Save Note", "Guardar Nota")}</Button>
                 </div>
               </form>
               <ScrollArea className="h-[300px] w-full rounded-md border p-4">
                 {logEntries.filter(entry => entry.childName === child).map((entry) => (
-                  <div key={entry.id} className="mb-4 p-3 bg-gray-100 rounded-lg">
-                    <p className="font-semibold">{entry.note}</p>
-                    <div className="flex items-center space-x-2 text-sm text-gray-500 mt-2">
-                      <Calendar className="h-4 w-4" />
-                      <span>{translate("Date:", "Fecha:")} {entry.date}</span>
-                      <CloudSun className="h-4 w-4 ml-2" />
-                      <span>{translate("Weather:", "Clima:")} {translate(entry.weather, entry.weather)}</span>
-                    </div>
-                  </div>
+                  <Card 
+                    key={entry.id} 
+                    className="bg-card dark:bg-card border-border mb-4 hover:bg-accent/50 dark:hover:bg-accent/50 transition-duration-200"
+                  >
+                    <CardContent className="p-4">
+                      <div className="text-card-foreground dark:text-card-foreground">
+                        {entry.note}
+                      </div>
+                      <div className="text-sm text-muted-foreground mt-2 flex items-center">
+                        <Calendar className="h-3 w-3 mr-1" />
+                        {entry.date}
+                        <Clock className="h-3 w-3 ml-2 mr-1" />
+                        {entry.weather}
+                        {entry.weather && (
+                          <span className="ml-2 flex items-center">
+                            <CloudSun className="h-3 w-3 mr-1" />
+                            {entry.weather}
+                          </span>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
                 ))}
               </ScrollArea>
+              {imagePreview && (
+                <div className="mt-4">
+                  <Image
+                    src={imagePreview}
+                    alt="Selected"
+                    width={200}
+                    height={200}
+                    className="rounded-md object-cover"
+                  />
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setImagePreview(null);
+                    }}
+                    className="mt-2"
+                  >
+                    <X className="h-4 w-4 mr-2" />
+                    Remove Image
+                  </Button>
+                </div>
+              )}
             </TabsContent>
           ))}
         </Tabs>

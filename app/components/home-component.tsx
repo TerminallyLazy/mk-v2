@@ -1,368 +1,272 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
-import { Button } from "@/app/components/ui/button";
-import { Input } from "@/app/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/app/components/ui/card";
-import { ScrollArea } from "@/app/components/ui/scroll-area";
-import { Send, Share2, ChevronLeft, ChevronRight } from "lucide-react";
-import Image from "next/image";
+import React, { useState } from 'react'
+import { Button } from "@/app/components/ui/button"
+import { Input } from "@/app/components/ui/input"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/components/ui/card"
+import { ScrollArea } from "@/app/components/ui/scroll-area"
+import { Send } from 'lucide-react'
+import Image from "next/image"
+import momClappingWithKidImage from "@/public/momclappingwithkid.webp";
+import momWorkWithKidImage from "@/public/momworkwithkid.webp";
+import babyNappingImage from "@/public/babynapping.webp";
+import medMythImage from "@/public/medmyth.png";
 
+type TranslateFunction = (en: string, es: string) => string;
 
 interface HomeComponentProps {
-    addPoints: (amount: number) => void; // Remove optional flag since it's required
-    translate?: (en: string, es: string) => string;
+  addPoints: (amount: number) => void;
+  translate: TranslateFunction;
+}
+
+const defaultTranslate: TranslateFunction = (en: string) => en;
+
+interface ChatMessage {
+  role: 'user' | 'assistant';
+  content: string;
+  sources?: string[];
+}
+
+interface RequestBody {
+  prompt: string;
+  type: string;
+  image?: string;
+}
+
+export default function HomeComponent({ addPoints = () => {}, translate = defaultTranslate }: HomeComponentProps) {
+  const [question, setQuestion] = useState('')
+  const [conversation, setConversation] = useState<ChatMessage[]>([]);
+  const [showSources, setShowSources] = useState(false)
+  const [medImage, setMedImage] = useState<File | null>(null);
+
+  const toggleSources = () => {
+    setShowSources(!showSources)
   }
 
- 
-  interface Story {
-    id: number;
-    title: string;
-    titleEs: string;
-    image: string;
-    synopsis: string;
-    synopsisEs: string;
-  }
+  const stories = [
+    { id: 1, title: "Mom's Innovative Approach to Picky Eating", titleEs: "Enfoque innovador de una madre para niños quisquillosos con la comida", image: "/fruitsandveg.jpg", synopsis: "Learn how one mom transformed mealtime battles into fun food adventures.", synopsisEs: "Descubre cómo una madre transformó las batallas a la hora de comer en divertidas aventuras culinarias." },
+    { id: 2, title: "The Power of Positive Reinforcement", titleEs: "El poder del refuerzo positivo", image: momClappingWithKidImage, synopsis: "Discover effective ways to encourage good behavior in children.", synopsisEs: "Descubre formas efectivas de fomentar el buen comportamiento en los niños." },
+    { id: 3, title: "Balancing Work and Motherhood", titleEs: "Equilibrando el trabajo y la maternidad", image: momWorkWithKidImage, synopsis: "Tips from successful moms on managing career and family life.", synopsisEs: "Consejos de madres exitosas sobre cómo manejar la carrera y la vida familiar." },
+    { id: 4, title: "Creating a Safe Sleep Environment", titleEs: "Creando un ambiente seguro para dormir", image: babyNappingImage, synopsis: "Expert advice on setting up the perfect nursery for your baby.", synopsisEs: "Consejos de expertos para preparar la habitación perfecta para tu bebé." },
+    { id: 5, title: "Medical Myths Debunked", titleEs: "Mitos médicos desmentidos", image: medMythImage, synopsis: "Separating fact from fiction in common medical beliefs about children's health.", synopsisEs: "Separando la realidad de la ficción en las creencias médicas comunes sobre la salud infantil." }
+]
 
-
-  export function HomeComponent({ addPoints, translate: propTranslate }: HomeComponentProps) {
-    const [language] = useState("en");
-    const [question, setQuestion] = useState("");
-    const [conversation, setConversation] = useState<
-      { role: "user" | "assistant"; content: string }[]
-    >([]);
-    const [carouselIndex, setCarouselIndex] = useState(0);
-    const [shareText, setShareText] = useState("");
-    const translate = propTranslate || ((en: string, es: string) => (language === "en" ? en : es));
-  
-
-  const stories: Story[] = [
-    {
-      id: 1,
-      title: "Mom's Innovative Approach to Picky Eating",
-      titleEs:
-        "Enfoque innovador de una madre para niños quisquillosos con la comida",
-      image: "",
-      synopsis:
-        "Learn how one mom transformed mealtime battles into fun food adventures.",
-      synopsisEs:
-        "Descubre cómo una madre transformó las batallas a la hora de comer en divertidas aventuras culinarias.",
-    },
-    {
-      id: 2,
-      title: "The Power of Positive Reinforcement",
-      titleEs: "El poder del refuerzo positivo",
-      image: "/placeholder.svg",
-      synopsis:
-        "Discover effective ways to encourage good behavior in children.",
-      synopsisEs:
-        "Descubre formas efectivas de fomentar el buen comportamiento en los niños.",
-    },
-    {
-      id: 3,
-      title: "Balancing Work and Motherhood",
-      titleEs: "Equilibrando el trabajo y la maternidad",
-      image: "/placeholder.svg",
-      synopsis: "Tips from successful moms on managing career and family life.",
-      synopsisEs:
-        "Consejos de madres exitosas sobre cómo manejar la carrera y la vida familiar.",
-    },
-    {
-      id: 4,
-      title: "Creating a Safe Sleep Environment",
-      titleEs: "Creando un ambiente seguro para dormir",
-      image: "/placeholder.svg",
-      synopsis:
-        "Expert advice on setting up the perfect nursery for your baby.",
-      synopsisEs:
-        "Consejos de expertos para preparar la habitación perfecta para tu bebé.",
-    },
-    {
-      id: 5,
-      title: "Nutrition for Growing Minds",
-      titleEs: "Nutrición para mentes en crecimiento",
-      image: "/placeholder.svg",
-      synopsis:
-        "Explore the best foods to boost your child's cognitive development.",
-      synopsisEs:
-        "Explora los mejores alimentos para impulsar el desarrollo cognitivo de tu hijo.",
-    },
-    {
-      id: 6,
-      title: "Fostering Creativity in Children",
-      titleEs: "Fomentando la creatividad en los niños",
-      image: "/placeholder.svg",
-      synopsis:
-        "Fun activities to nurture your child's imagination and artistic skills.",
-      synopsisEs:
-        "Actividades divertidas para nutrir la imaginación y las habilidades artísticas de tu hijo.",
-    },
-  ];
-
-  const handleSubmit = (e: React.FormEvent, type: string) => {
+  const handleSubmit = async (e: React.FormEvent, type: string) => {
     e.preventDefault();
-    if (question.trim()) {
-      setConversation([
-        ...conversation,
-        { role: "user", content: `[${type}] ${question}` },
-      ]);
-      // Simulate AI response
-      setTimeout(() => {
-        setConversation((prev) => [
-          ...prev,
-          {
-            role: "assistant",
-            content: translate(
-              `This is a simulated AI response to your ${type} question: "${question}". In a real implementation, this would connect to an AI service using reliable medical sources.`,
-              `Esta es una respuesta simulada de IA a tu pregunta de ${type}: "${question}". En una implementación real, esto se conectaría a un servicio de IA utilizando fuentes médicas confiables.`,
-            ),
-          },
-        ]);
-        addPoints(5);
-      }, 1000);
-      setQuestion("");
-    }
-  };
+    if (!question.trim() && !medImage) return;
 
-  const handleShare = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (shareText.trim()) {
-      console.log(`Sharing "${shareText}" with friend or family member`);
-      setShareText("");
-      if (typeof addPoints === 'function') {
-        addPoints(5);
+    setConversation(prev => [...prev, { 
+      role: 'user', 
+      content: `[${type}] ${question}` 
+    }]);
+
+    try {
+      const requestBody: RequestBody = {
+        prompt: question,
+        type
+      };
+
+      if (type === 'Med Lookup' && medImage) {
+        const reader = new FileReader();
+        const imageData = await new Promise<string>((resolve) => {
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(medImage);
+        });
+        requestBody.image = imageData;
       }
+
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+      });
+
+      if (!response.ok) throw new Error('Failed to generate response');
+
+      const data = await response.json();
+
+      setConversation(prev => [...prev, { 
+        role: 'assistant', 
+        content: data.text,
+        sources: data.sources || []
+      }]);
+
+      if (data.sources?.length) {
+        setShowSources(true);
+      }
+
+      setQuestion('');
+      setMedImage(null);
+      if (addPoints) addPoints(5);
+
+    } catch (error) {
+      console.error('Error:', error);
+      setConversation(prev => [...prev, { 
+        role: 'assistant', 
+        content: 'I apologize, but I encountered an error. Please try again.',
+        sources: []
+      }]);
     }
   };
 
-  const carouselLength = stories.length;
-
-  const nextSlide = useCallback(() => {
-    setCarouselIndex((prev) => (prev + 1) % carouselLength);
-  }, [carouselLength]);
-
-  const prevSlide = useCallback(() => {
-    setCarouselIndex((prev) => (prev === 0 ? carouselLength - 1 : prev - 1));
-  }, [carouselLength]);
-
-  // Add this useEffect for auto-advance
-  useEffect(() => {
-    const timer = setInterval(nextSlide, 5000);
-    return () => clearInterval(timer);
-  }, [nextSlide]);
+  const handleMedImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setMedImage(file);
+      handleSubmit(e, 'Med Lookup');
+    }
+  };
 
   return (
-    <div className="space-y-6 sm:space-y-8">
-      <div className="text-2xl sm:text-[40pt] font-serif p-2 sm:p-4 text-center">
+    <div className="space-y-6 sm:space-y-8 bg-background dark:bg-background p-4 min-h-screen">
+      <div className="text-2xl sm:text-[40pt] font-serif text-center text-foreground">
         {translate("Welcome Back Megan", "Bienvenida de nuevo Megan")}
       </div>
-      <Card className="p-2 sm:p-4 bg-gray-50">
+
+      {/* Articles Section - Grid Layout */}
+      <div className="grid grid-cols-4 gap-4">
+        {/* Featured Story - Takes up 2x2 space */}
+        <Card className="col-span-2 row-span-2 bg-card dark:bg-card border-border">
+          <CardContent className="p-4">
+            <Image 
+              src={stories[0].image}
+              alt={translate(stories[0].title, stories[0].titleEs)} 
+              className="w-full h-[400px] object-cover mb-4 rounded-lg shadow-md"
+              width={800}
+              height={400}
+            />
+            <CardTitle className="text-lg mb-2 text-card-foreground">
+              {translate(stories[0].title, stories[0].titleEs)}
+            </CardTitle>
+            <CardDescription className="text-sm text-muted-foreground line-clamp-2">
+              {translate(stories[0].synopsis, stories[0].synopsisEs)}
+            </CardDescription>
+          </CardContent>
+        </Card>
+
+        {/* Other Stories - Each takes up 1x1 space */}
+        {stories.slice(1).map((story) => (
+          <Card key={story.id} className="bg-card dark:bg-card border-border">
+            <CardContent className="p-4 flex flex-col h-full">
+              <div className="relative w-full pt-[100%] mb-2"> {/* This creates a perfect square */}
+                <Image 
+                  src={story.image} 
+                  alt={translate(story.title, story.titleEs)} 
+                  className="absolute top-0 left-0 w-full h-full object-cover rounded-md shadow-sm"
+                  width={200}
+                  height={200}
+                />
+              </div>
+              <CardTitle className="text-sm mb-1 text-card-foreground line-clamp-1">
+                {translate(story.title, story.titleEs)}
+              </CardTitle>
+              <CardDescription className="text-xs text-muted-foreground line-clamp-2">
+                {translate(story.synopsis, story.synopsisEs)}
+              </CardDescription>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Chat Interface - Now at the bottom and larger */}
+      <Card className="p-4 bg-card dark:bg-card shadow-lg border-border">
         <CardHeader>
-          <CardTitle>
+          <CardTitle className="text-card-foreground">
             {translate("Ask a Question", "Haz una pregunta")}
           </CardTitle>
-          <CardDescription>
-            {translate(
-              "Get answers from reliable medical sources",
-              "Obtén respuestas de fuentes médicas confiables",
-            )}
+          <CardDescription className="text-muted-foreground">
+            {translate("Get answers from reliable medical sources", "Obtén respuestas de fuentes médicas confiables")}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ScrollArea className="h-[100px] mb-4">
+          {/* Chat Messages Area */}
+          <ScrollArea className="h-[400px] mb-4 p-4 border rounded-lg">
             {conversation.map((message, index) => (
               <div
                 key={index}
-                className={`mb-4 ${message.role === "assistant" ? "text-blue-600" : "text-gray-800"}`}
+                className={`mb-4 p-3 rounded-lg ${
+                  message.role === 'assistant'
+                    ? 'bg-primary/10 ml-4'
+                    : 'bg-muted mr-4'
+                }`}
               >
-                <strong>
-                  {message.role === "assistant"
-                    ? translate("AI: ", "IA: ")
-                    : translate("You: ", "Tú: ")}
-                </strong>
-                {message.content}
+                <div className="flex items-start">
+                  <div className="flex-grow">
+                    <div className="font-semibold mb-1">
+                      {message.role === 'assistant' ? translate('AI Assistant', 'Asistente IA') : translate('You', 'Tú')}
+                    </div>
+                    <div className="text-sm">{message.content}</div>
+                  </div>
+                </div>
               </div>
             ))}
           </ScrollArea>
-          <form className="space-y-2">
-            <div className="flex space-x-2">
+
+          {/* Sources Panel - Shows when sources are available */}
+          {showSources && conversation.length > 0 && (
+            <div className="mb-4 p-4 bg-muted rounded-lg">
+              <h3 className="font-semibold mb-2">{translate("Sources Used", "Fuentes Utilizadas")}</h3>
+              <ul className="text-sm space-y-1">
+                {conversation[conversation.length - 1]?.sources?.map((source: string, index: number) => (
+                  <li key={index} className="text-muted-foreground">
+                    {source}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Input Area */}
+          <div className="space-y-4">
+            <div className="flex gap-2">
               <Input
-                placeholder={translate(
-                  "Type your question here...",
-                  "Escribe tu pregunta aquí...",
-                )}
+                placeholder={translate("Type your question here...", "Escribe tu pregunta aquí...")}
                 value={question}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuestion(e.target.value)}
-                className="flex-grow"
+                onChange={(e) => setQuestion(e.target.value)}
+                className="flex-grow bg-background dark:bg-background"
               />
-              <Button type="submit" onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleSubmit(e, "General")}>
+              <Button type="submit" onClick={(e) => handleSubmit(e, 'General')}>
                 <Send className="h-4 w-4" />
-                <span className="sr-only">{translate("Send", "Enviar")}</span>
               </Button>
             </div>
-            <div className="flex justify-start space-x-2">
+
+            {/* Action Buttons */}
+            <div className="flex flex-wrap gap-2">
               <Button
-                type="button"
                 variant="outline"
                 size="sm"
-                className="px-2 py-1 text-xs"
-                onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleSubmit(e, "Med Lookup")}
+                onClick={toggleSources}
+                className="bg-background dark:bg-background"
+              >
+                {translate("Sources", "Fuentes")}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => document.getElementById('med-photo-upload')?.click()}
+                className="bg-background dark:bg-background"
               >
                 {translate("Med Lookup", "Búsqueda de Medicamentos")}
               </Button>
+              <input
+                id="med-photo-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleMedImageUpload}
+              />
               <Button
-                type="button"
                 variant="outline"
                 size="sm"
-                className="px-2 py-1 text-xs"
-                onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleSubmit(e, "Mental & Behavioral Health")}
+                onClick={(event: React.MouseEvent) => handleSubmit(event, 'Mental & Behavioral Health')}
+                className="bg-background dark:bg-background"
               >
-                {translate(
-                  "Mental & Behavioral Health",
-                  "Salud Mental y Conductual",
-                )}
+                {translate("Mental & Behavioral Health", "Salud Mental y Conductual")}
               </Button>
             </div>
-          </form>
-        </CardContent>
-      </Card>
-      <Card className="p-2 sm:p-4">
-        <CardContent className="p-0">
-        <Image
-            src={stories[0].image}
-            alt={translate(stories[0].title, stories[0].titleEs)}
-            width={400}
-            height={200}
-            className="object-cover"
-        />
-        </CardContent>
-        <CardHeader>
-          <CardTitle>
-            {translate(stories[0].title, stories[0].titleEs)}
-          </CardTitle>
-          <CardDescription>
-            {translate(stories[0].synopsis, stories[0].synopsisEs)}
-          </CardDescription>
-        </CardHeader>
-        <CardFooter className="flex justify-end">
-          <form onSubmit={handleShare} className="flex space-x-2">
-            <Input
-              placeholder={translate(
-                "Share with friend or family...",
-                "Compartir con amigo o familiar...",
-              )}
-              value={shareText}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setShareText(e.target.value)}
-              className="w-64"
-            />
-            <Button type="submit">
-              <Share2 className="h-4 w-4 mr-2" />
-              {translate("Share", "Compartir")}
-            </Button>
-          </form>
-        </CardFooter>
-      </Card>
-
-      <div className="relative">
-        <div className="flex overflow-hidden">
-          <div
-            className="flex transition-transform duration-300 ease-in-out"
-            style={{ transform: `translateX(-${carouselIndex * 100}%)` }}
-          >
-            {stories.slice(1).map((story) => (
-              <div
-                key={story.id}
-                className="flex-shrink-0 w-full sm:w-1/3 md:w-1/4 px-1 sm:px-2"
-              >
-                <Card>
-                  <CardContent className="p-0 relative h-32">
-                  <Image
-                      src={story.image}
-                      alt={translate(story.title, story.titleEs)}
-                      width={200}
-                      height={100}
-                      className="object-cover"
-                  />
-                  </CardContent>
-                  <CardHeader>
-                    <CardTitle className="text-sm">
-                      {translate(story.title, story.titleEs)}
-                    </CardTitle>
-                    <CardDescription className="text-xs">
-                      {translate(story.synopsis, story.synopsisEs)}
-                    </CardDescription>
-                  </CardHeader>
-                </Card>
-              </div>
-            ))}
           </div>
-          <Button
-            variant="outline"
-            size="icon"
-            className="absolute top-1/2 left-0 transform -translate-y-1/2"
-            onClick={prevSlide}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            className="absolute top-1/2 right-0 transform -translate-y-1/2"
-            onClick={nextSlide}
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
-      <NewsTicker translate={translate as (en: string, es: string) => string} />
+        </CardContent>
+      </Card>
     </div>
-  );
-}
-
-function NewsTicker({ translate }: { translate: (en: string, es: string) => string }) {
-  // const [setNewsIndex] = useState(0);
-
-  const news = [
-    {
-      text: translate("CDC recommends new COVID-19 booster for children under 5",
-                     "CDC recomienda nuevo refuerzo de COVID-19 para niños menores de 5 años"),
-      es: "CDC recomienda nuevo refuerzo de COVID-19 para niños menores de 5 años",
-    },
-    {
-      en: "Study shows benefits of early childhood education on long-term health",
-      es: "Estudio muestra beneficios de la educación infantil temprana en la salud a largo plazo",
-    },
-    {
-      en: "New legislation aims to improve maternal healthcare access",
-      es: "Nueva legislación busca mejorar el acceso a la atención médica materna",
-    },
-    {
-      en: "Experts emphasize importance of mental health support for new mothers",
-      es: "Expertos enfatizan la importancia del apoyo de salud mental para nuevas madres",
-    },
-    {
-      en: "Research reveals link between nutrition and cognitive development in infants",
-      es: "Investigación revela vínculo entre nutrición y desarrollo cognitivo en bebés",
-    },
-  ];
-
-  return (
-    <div className="bg-purple-100 p-2 sm:p-4 overflow-hidden">
-      <div className="relative w-full">
-        <div
-          className="flex whitespace-nowrap"
-          style={{
-            animation: "marquee 20s linear infinite",
-          }}
-        >
-          {news.concat(news).map((item, index) => (
-            <span key={index} className="inline-block px-4">
-              {item.en} / {item.es}
-            </span>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+  )
 }
 

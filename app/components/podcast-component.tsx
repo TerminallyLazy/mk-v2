@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app
 import { Button } from "@/app/components/ui/button"
 import { Textarea } from "@/app/components/ui/textarea"
 import { Label } from "@/app/components/ui/label"
-import { Video, FileText, Home, Search, User, MoveRight } from 'lucide-react'
+import { Video, FileText, MoveRight } from 'lucide-react'
 import Image from "next/image";
 
 interface PodcastProps {
@@ -27,9 +27,9 @@ const initialPodcasts: PodcastItems[] = [
   {
     id: 1,
     title: "Health Series with a Guide",
-    description: "Expert Health Advice for Moms: Building Health Literacy, One Episode at a Time",
+    description: "Expert Health Advice for Moms: Building Health Literacy, One Episode at a Time", 
     duration: "32:15",
-    image: "https://moms-kidz-app.public.blob.vercel-storage.com/tudor-mom-NJOhEZ0.png",
+    image: "https://images.unsplash.com/photo-1516585427167-9f4af9627e6c?w=800&auto=format&fit=crop",
     link: "https://podcasters.spotify.com/pod/show/moms-kidz/episodes/Moms-Know-Health-e2pv5vm",
     isVideo: true,
     textFile: "/moms-know-health-transcript.txt"
@@ -39,7 +39,7 @@ const initialPodcasts: PodcastItems[] = [
     title: "Nurturing Young Minds",
     description: "Mental health strategies for children",
     duration: "40:30",
-    image: "/placeholder.svg?height=100&width=100",
+    image: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=800&auto=format&fit=crop",
     link: "#",
     textFile: "/nurturing-young-minds-transcript.txt"
   },
@@ -48,9 +48,18 @@ const initialPodcasts: PodcastItems[] = [
     title: "Navigating Motherhood",
     description: "Tips and tricks for new moms",
     duration: "45:30",
-    image: "/placeholder.svg?height=100&width=100",
+    image: "/momnav.jpg",
     link: "#",
     textFile: "/navigating-motherhood-transcript.txt"
+  },
+  {
+    id: 4,
+    title: "Balancing Act: Work and Family",
+    description: "Tips for working moms with young kids", 
+    duration: "42:10",
+    image: "/worklifemom.jpg",
+    link: "#",
+    textFile: "/work-family-balance-transcript.txt"
   }
 ]
 
@@ -58,9 +67,9 @@ const suggestedPodcasts: PodcastItems[] = [
   {
     id: 5,
     title: "Toddler Tantrums Tamed",
-    description: "Strategies for managing toddler behavior",
+    description: "Strategies for managing toddler behavior", 
     duration: "40:20",
-    image: "/placeholder.svg?height=100&width=100",
+    image: "https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=800&auto=format&fit=crop",
     link: "#",
     textFile: "/toddler-tantrums-transcript.txt"
   },
@@ -69,7 +78,7 @@ const suggestedPodcasts: PodcastItems[] = [
     title: "Elementary Education Essentials",
     description: "Supporting your 6-8 year old's learning",
     duration: "35:45",
-    image: "/placeholder.svg?height=100&width=100",
+    image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&auto=format&fit=crop",
     link: "#",
     textFile: "/elementary-education-transcript.txt"
   },
@@ -78,7 +87,7 @@ const suggestedPodcasts: PodcastItems[] = [
     title: "Balancing Act: Work and Family",
     description: "Tips for working moms with young kids",
     duration: "42:10",
-    image: "/placeholder.svg?height=100&width=100",
+    image: "https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?w=800&auto=format&fit=crop",
     link: "#",
     textFile: "/work-family-balance-transcript.txt"
   }
@@ -91,7 +100,7 @@ const suggestedPodcasts: PodcastItems[] = [
 
 export function PodcastComponent({ translate }: PodcastProps) {
   const [featuredPodcasts, setFeaturedPodcasts] = useState<PodcastItems[]>(initialPodcasts)
-  const [selectedPodcast, setSelectedPodcast] = useState<PodcastItems | null>(null)
+  const [selectedPodcast] = useState<PodcastItems | null>(null)
   const [surveyResponses, setSurveyResponses] = useState({
     rating: 0,
     question2: '',
@@ -109,10 +118,6 @@ export function PodcastComponent({ translate }: PodcastProps) {
     handleViewSelectedPodcast();
   }, [handleViewSelectedPodcast]);
 
-  const handleSelectPodcast = (podcast: PodcastItems) => {
-    setSelectedPodcast(podcast)
-  }
-
   const handleMovePodcast = (podcast: PodcastItems) => {
     setFeaturedPodcasts(prev => [...prev, podcast])
   }
@@ -124,16 +129,10 @@ export function PodcastComponent({ translate }: PodcastProps) {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
-      <header className="bg-white shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <h1 className="text-2xl font-bold text-gray-900">{translate("Moms Kidz Podcasts", "Podcasts de Moms Kidz")}</h1>
-        </div>
-      </header>
-
+    <div className="flex flex-col min-h-screen bg-background dark:bg-background">
       <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="md:col-span-2">
+          <Card className="md:col-span-2 bg-card dark:bg-card border-border">
             <CardHeader>
               <CardTitle>{translate("Featured Podcasts", "Podcasts Destacados")}</CardTitle>
               <CardDescription>{translate("Listen to our curated selection of podcasts for mothers", "Escucha nuestra selección de podcasts para madres")}</CardDescription>
@@ -141,19 +140,21 @@ export function PodcastComponent({ translate }: PodcastProps) {
             <CardContent>
               <div className="space-y-4">
                 {featuredPodcasts.map((podcast) => (
-                  <Card key={podcast.id} className="flex items-center p-4 cursor-pointer hover:bg-gray-100" onClick={() => handleSelectPodcast(podcast)}>
-                    <Image
-                    src={podcast.image}
-                    alt={podcast.title}
-                    width={64}
-                    height={64}
-                    className="rounded-md object-cover"
-                    />
-                    <div className="flex-grow">
-                      <h3 className="font-semibold">{podcast.title}</h3>
-                      <p className="text-sm text-gray-500">{podcast.description}</p>
+                  <Card key={podcast.id} className="flex items-center p-4 cursor-pointer hover:bg-accent/50 dark:hover:bg-accent/50 transition-duration-200">
+                    <div className="w-24 h-24 flex-shrink-0 mr-6">
+                      <Image
+                        src={podcast.image}
+                        alt={podcast.title}
+                        width={96}
+                        height={96}
+                        className="rounded-md object-cover w-full h-full"
+                      />
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex-grow min-w-0">
+                      <h3 className="font-semibold text-base mb-1 truncate">{podcast.title}</h3>
+                      <p className="text-sm text-gray-500 line-clamp-2">{podcast.description}</p>
+                    </div>
+                    <div className="flex items-center space-x-2 ml-4 flex-shrink-0">
                       <div className="text-sm text-gray-500">{podcast.duration}</div>
                       {podcast.textFile && (
                         <a href={podcast.textFile} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700">
@@ -180,19 +181,26 @@ export function PodcastComponent({ translate }: PodcastProps) {
             <CardContent>
               <div className="space-y-4">
                 {suggestedPodcasts.map((podcast) => (
-                  <Card key={podcast.id} className="flex items-center p-4">
-                    <Image
-                    src={podcast.image}
-                    alt={podcast.title}
-                    width={64}
-                    height={64}
-                    className="rounded-md object-cover"
-                    />
-                    <div className="flex-grow">
-                      <h3 className="font-semibold text-sm">{podcast.title}</h3>
-                      <p className="text-xs text-gray-500">{podcast.description}</p>
+                  <Card key={podcast.id} className="flex items-center p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-duration-200">
+                    <div className="w-16 h-16 flex-shrink-0 mr-4">
+                      <Image
+                        src={podcast.image}
+                        alt={podcast.title}
+                        width={64}
+                        height={64}
+                        className="rounded-md object-cover w-full h-full"
+                      />
                     </div>
-                    <Button variant="outline" size="sm" onClick={() => handleMovePodcast(podcast)}>
+                    <div className="flex-grow min-w-0">
+                      <h3 className="font-semibold text-sm mb-1 truncate">{podcast.title}</h3>
+                      <p className="text-xs text-gray-500 line-clamp-2">{podcast.description}</p>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => handleMovePodcast(podcast)}
+                      className="ml-4 flex-shrink-0"
+                    >
                       <MoveRight className="h-4 w-4 mr-1" />
                       {translate("Move", "Mover")}
                     </Button>
@@ -260,26 +268,6 @@ export function PodcastComponent({ translate }: PodcastProps) {
           </CardContent>
         </Card>
       </main>
-
-      <footer className="bg-white shadow-md mt-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <p className="text-sm text-gray-500">{translate("© 2023 Moms Kidz. All rights reserved.", "© 2023 Moms Kidz. Todos los derechos reservados.")}</p>
-          <nav className="flex space-x-4">
-            <Button variant="ghost" size="sm">
-              <Home className="h-4 w-4 mr-2" />
-              {translate("Home", "Inicio")}
-            </Button>
-            <Button variant="ghost" size="sm">
-              <Search className="h-4 w-4 mr-2" />
-              {translate("Search", "Buscar")}
-            </Button>
-            <Button variant="ghost" size="sm">
-              <User className="h-4 w-4 mr-2" />
-              {translate("Profile", "Perfil")}
-            </Button>
-          </nav>
-        </div>
-      </footer>
     </div>
   );
 }
