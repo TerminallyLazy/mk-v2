@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app
 import { Button } from "@/app/components/ui/button"
 import { Textarea } from "@/app/components/ui/textarea"
 import { Label } from "@/app/components/ui/label"
-import { Video, FileText, Home, Search, User, MoveRight } from 'lucide-react'
+import { Video, FileText, MoveRight } from 'lucide-react'
 import Image from "next/image";
 
 interface PodcastProps {
@@ -53,7 +53,7 @@ const initialPodcasts: PodcastItems[] = [
     textFile: "/navigating-motherhood-transcript.txt"
   },
   {
-    id: 7,
+    id: 4,
     title: "Balancing Act: Work and Family",
     description: "Tips for working moms with young kids", 
     duration: "42:10",
@@ -100,7 +100,7 @@ const suggestedPodcasts: PodcastItems[] = [
 
 export function PodcastComponent({ translate }: PodcastProps) {
   const [featuredPodcasts, setFeaturedPodcasts] = useState<PodcastItems[]>(initialPodcasts)
-  const [selectedPodcast, setSelectedPodcast] = useState<PodcastItems | null>(null)
+  const [selectedPodcast] = useState<PodcastItems | null>(null)
   const [surveyResponses, setSurveyResponses] = useState({
     rating: 0,
     question2: '',
@@ -117,10 +117,6 @@ export function PodcastComponent({ translate }: PodcastProps) {
   useEffect(() => {
     handleViewSelectedPodcast();
   }, [handleViewSelectedPodcast]);
-
-  const handleSelectPodcast = (podcast: PodcastItems) => {
-    setSelectedPodcast(podcast)
-  }
 
   const handleMovePodcast = (podcast: PodcastItems) => {
     setFeaturedPodcasts(prev => [...prev, podcast])

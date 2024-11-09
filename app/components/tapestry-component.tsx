@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react/no-unescaped-entities */
+
 "use client"
 
 import React, { useState } from 'react'
@@ -33,9 +36,9 @@ function MoodTracker({ translate }: MoodTrackerProps) {
     5: "bg-blue-200"
   }
 
-  const getMoodForDate = (date: Date) => {
-    return ((date.getTime() % 5) + 1)
-  }
+  // const getMoodForDate = (date: Date) => {
+  //   return ((date.getTime() % 5) + 1)
+  // }
 
   return (
     <Card className="mt-4">
@@ -103,14 +106,23 @@ interface TapestryComponentProps {
   translate?: TranslateFunction;
 }
 
+interface Post {
+  id: number;
+  author: string;
+  content: string;
+  likes: number;
+  comments: number;
+  viewCount?: number;
+  lastViewed?: string;
+}
+
 export default function TapestryComponent({ addPoints, translate }: TapestryComponentProps) {
   const [activeTab, setActiveTab] = useState("feed");
   const [carouselIndex, setCarouselIndex] = useState(0);
-  const [, setActiveStory] = useState<number | null>(null);
-  const [posts, setPosts] = useState([
+  const [posts, setPosts] = useState<Post[]>([
     { id: 1, author: "Sarah M.", content: translate ? translate("Just discovered a great way to make veggies fun for kids!", "¡Acabo de descubrir una excelente manera de hacer que las verduras sean divertidas para los niños!") : "Just discovered a great way to make veggies fun for kids!", likes: 15, comments: 2 },
     { id: 2, author: "Emily R.", content: translate ? translate("Any tips for dealing with toddler tantrums?", "¿Algún consejo para lidiar con las rabietas de los niños pequeños?") : "Any tips for dealing with toddler tantrums?", likes: 8, comments: 3 },
-    { id: 3, author: "Jessica T.", content: translate ? translate("Proud mom moment: My little one took her first steps today!", "Momento de orgullo materno: ¡Mi pequeño dio sus primeros pasos hoy!") : "Proud mom moment: My little one took her first steps today!", likes: 32, comments: 5 },
+    { id: 3, author: "Jessica T.", content: translate ? translate("Proud mom moment: My little one took their first steps today!", "Momento de orgullo materno: ¡Mi pequeño dio sus primeros pasos hoy!") : "Proud mom moment: My little one took their first steps today!", likes: 32, comments: 5 },
     { id: 4, author: "Laura K.", content: translate ? translate("Looking for book recommendations for toddlers. Any suggestions?", "Busco recomendaciones de libros para niños pequeños. ¿Alguna sugerencia?") : "Looking for book recommendations for toddlers. Any suggestions?", likes: 12, comments: 7 },
     { id: 5, author: "Megan P.", content: translate ? translate("Just meal prepped for the whole week. Feeling accomplished!", "Acabo de preparar las comidas para toda la semana. ¡Me siento realizada!") : "Just meal prepped for the whole week. Feeling accomplished!", likes: 28, comments: 4 },
     { id: 6, author: "Rachel S.", content: translate ? translate("First day back at work after maternity leave. Mixed emotions!", "Primer día de vuelta al trabajo después de la baja por maternidad. ¡Emociones encontradas!") : "First day back at work after maternity leave. Mixed emotions!", likes: 45, comments: 10 },
@@ -234,6 +246,28 @@ export default function TapestryComponent({ addPoints, translate }: TapestryComp
     setCarouselIndex((prevIndex) => (prevIndex - 1 + Math.ceil(posts.length / 5)) % Math.ceil(posts.length / 5));
   };
 
+  const handleStoryClick = (storyId: number) => {
+    const story = stories.find(s => s.id === storyId);
+    if (!story) return;
+
+    // Track story engagement
+    if (addPoints) addPoints(5);
+    
+    // Update story metrics
+    const storyMetrics = {
+      id: story.id,
+      title: story.title,
+      timestamp: new Date().toISOString(),
+      type: 'view'
+    };
+
+    // Update local storage metrics
+    const existingMetrics = JSON.parse(localStorage.getItem('storyMetrics') || '[]');
+    localStorage.setItem('storyMetrics', JSON.stringify([
+      ...existingMetrics,
+      storyMetrics
+    ]));
+  };
 
   return (
     <Card className="p-2 sm:p-4 bg-background dark:bg-background">
@@ -296,6 +330,7 @@ export default function TapestryComponent({ addPoints, translate }: TapestryComp
               <Card 
                 key={story.id} 
                 className="flex-shrink-0 w-48 sm:w-64 cursor-pointer transition-all bg-card dark:bg-card hover:bg-accent dark:hover:bg-accent"
+                onClick={() => handleStoryClick(story.id)}
               >
                 <CardContent className="p-4">
                   <Image 
