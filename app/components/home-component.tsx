@@ -23,6 +23,8 @@ const defaultTranslate: TranslateFunction = (en: string) => en;
 interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
+  type?: string;
+  image?: string;
   sources?: string[];
 }
 
@@ -54,50 +56,47 @@ export default function HomeComponent({ addPoints = () => {}, translate = defaul
     e.preventDefault();
     if (!question.trim() && !medImage) return;
 
-    setConversation(prev => [...prev, { 
-      role: 'user', 
-      content: `[${type}] ${question}` 
-    }]);
+    // Add user message to conversation
+    const userMessage: ChatMessage = {
+      role: 'user',
+      content: question,
+      type
+    };
+
+    setConversation(prev => [...prev, userMessage]);
+    setQuestion('');
 
     try {
-      const requestBody: RequestBody = {
-        prompt: question,
-        type
-      };
-
-      if (type === 'Med Lookup' && medImage) {
-        const reader = new FileReader();
-        const imageData = await new Promise<string>((resolve) => {
+      let imageData = '';
+      if (medImage) {
+        imageData = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
           reader.onloadend = () => resolve(reader.result as string);
           reader.readAsDataURL(medImage);
         });
-        requestBody.image = imageData;
       }
 
-      const response = await fetch('/api/generate', {
+      const response = await fetch('/api/ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify({
+          prompt: question,
+          type,
+          image: imageData || undefined
+        })
       });
 
       if (!response.ok) throw new Error('Failed to generate response');
 
       const data = await response.json();
 
-      setConversation(prev => [...prev, { 
-        role: 'assistant', 
+      setConversation(prev => [...prev, {
+        role: 'assistant',
         content: data.text,
-        sources: data.sources || []
+        type: data.type
       }]);
 
-      if (data.sources?.length) {
-        setShowSources(true);
-      }
-
-      setQuestion('');
-      setMedImage(null);
       if (addPoints) addPoints(5);
-
     } catch (error) {
       console.error('Error:', error);
       setConversation(prev => [...prev, { 
@@ -170,11 +169,28 @@ export default function HomeComponent({ addPoints = () => {}, translate = defaul
       {/* Chat Interface - Now at the bottom and larger */}
       <Card className="p-4 bg-card dark:bg-card shadow-lg border-border">
         <CardHeader>
-          <CardTitle className="text-card-foreground">
+          <CardTitle className="text-card-foreground flex items-center gap-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-primary"
+            >
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
             {translate("Ask a Question", "Haz una pregunta")}
           </CardTitle>
           <CardDescription className="text-muted-foreground">
-            {translate("Get answers from reliable medical sources", "Obtén respuestas de fuentes médicas confiables")}
+            {translate(
+              "Powered by Gemini Pro - Ask questions or upload images for analysis",
+              "Impulsado por Gemini Pro - Haz preguntas o sube imágenes para análisis"
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent>
