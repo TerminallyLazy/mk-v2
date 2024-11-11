@@ -10,6 +10,7 @@ import momClappingWithKidImage from "@/public/momclappingwithkid.webp";
 import momWorkWithKidImage from "@/public/momworkwithkid.webp";
 import babyNappingImage from "@/public/babynapping.webp";
 import medMythImage from "@/public/medmyth.png";
+import { RequestBody } from '@/app/types/global';
 
 type TranslateFunction = (en: string, es: string) => string;
 
@@ -26,12 +27,6 @@ interface ChatMessage {
   type?: string;
   image?: string;
   sources?: string[];
-}
-
-interface RequestBody {
-  prompt: string;
-  type: string;
-  image?: string;
 }
 
 export default function HomeComponent({ addPoints = () => {}, translate = defaultTranslate }: HomeComponentProps) {
@@ -76,14 +71,17 @@ export default function HomeComponent({ addPoints = () => {}, translate = defaul
         });
       }
 
+      // Define requestBody with RequestBody type
+      const requestBody: RequestBody = {
+        prompt: question,
+        type,
+        image: imageData || undefined
+      };
+
       const response = await fetch('/api/ai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          prompt: question,
-          type,
-          image: imageData || undefined
-        })
+        body: JSON.stringify(requestBody)
       });
 
       if (!response.ok) throw new Error('Failed to generate response');

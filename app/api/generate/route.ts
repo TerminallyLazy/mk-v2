@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { RequestBody } from '@/app/types/global';
 
 // Initialize Google AI with environment variable
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   if (!process.env.GEMINI_API_KEY) {
     console.error('GEMINI_API_KEY is not set');
     return NextResponse.json(
@@ -14,7 +15,7 @@ export async function POST(req: Request) {
   }
 
   try {
-    const { prompt, type, image } = await req.json();
+    const { prompt, type, image }: RequestBody = await request.json();
 
     // Select model based on type
     const modelName = type === 'Med Lookup' ? 'gemini-pro-vision' : 'gemini-pro';
