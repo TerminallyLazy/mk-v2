@@ -36,9 +36,9 @@ const initialMilestones: Milestone[] = [
 ]
 
 const topMoms: Mom[] = [
-  { id: 1, name: "Sarah Johnson", points: 450, avatar: "/placeholder.svg?height=32&width=32" },
-  { id: 2, name: "Emily Davis", points: 425, avatar: "/placeholder.svg?height=32&width=32" },
-  { id: 3, name: "Jessica Brown", points: 410, avatar: "/placeholder.svg?height=32&width=32" },
+  { id: 1, name: "Sarah Johnson", points: 450, avatar: "/avatars/avatar1.png" },
+  { id: 2, name: "Emily Davis", points: 425, avatar: "/avatars/avatar2.png" },
+  { id: 3, name: "Jessica Brown", points: 410, avatar: "/avatars/avatar3.png" },
 ]
 
 export function MilestonesComponent() {

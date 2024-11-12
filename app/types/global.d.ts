@@ -6,4 +6,10 @@ interface ShareData {
 
 interface Navigator {
   share?: (data?: ShareData) => Promise<void>;
+}
+
+export interface RequestBody {
+  prompt: string;
+  type: string;
+  image?: string;
 } 
