@@ -12,6 +12,7 @@ import TapestryComponent from "@/app/components/tapestry-component";
 import { PodcastComponent } from "@/app/components/podcast-component";
 <<<<<<< HEAD
 import { ThemeToggle } from "@/app/components/ui/theme-toggle";
+<<<<<<< Updated upstream
 =======
 <<<<<<< Updated upstream
 import { ThemeToggle } from "@/app/components/ui/theme-toggle"
@@ -21,6 +22,10 @@ import { WelcomeModal } from "@/app/components/welcome-modal";
 import { useOnboarding } from "@/hooks/use-onboarding";
 >>>>>>> Stashed changes
 >>>>>>> 5f3de48 (Fix merge conflict in app/page.tsx)
+=======
+import { WelcomeModal } from "@/app/components/welcome-modal";
+import { useOnboarding } from "@/hooks/use-onboarding";
+>>>>>>> Stashed changes
 import Image from "next/image";
 
 export default function Home() {
@@ -59,6 +64,7 @@ export default function Home() {
   }, [language]);
 
   return (
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
     <div className="flex flex-col min-h-screen">
       <header className="bg-primary/95 text-primary-foreground py-4 backdrop-blur-sm border-b border-border/40 sticky top-0 z-50">
@@ -105,6 +111,68 @@ export default function Home() {
 <<<<<<< HEAD
             <div className="p-1 rounded-full bg-primary-foreground/10">
               <ThemeToggle />
+=======
+    <>
+      {!isCompleted && (
+        <WelcomeModal 
+          translate={translate} 
+          onLanguageChange={handleLanguageChange}
+          onThemeChange={handleThemeChange}
+        />
+      )}
+      <div className="flex flex-col min-h-screen">
+        <header className="bg-primary/95 text-primary-foreground py-4 backdrop-blur-sm border-b border-border/40 sticky top-0 z-50">
+          <div className="container mx-auto flex justify-between items-center px-4">
+            <div className="flex items-center transition-transform hover:scale-102">
+              <Image
+                src="/momkidz-white.png"
+                alt="MomsKidz Logo"
+                width={280}
+                height={84}
+                className="w-auto h-16 object-contain drop-shadow-md transition-all duration-300 hover:drop-shadow-xl"
+                priority
+              />
+            </div>
+            <div className="flex items-center gap-6">
+              {profile && (
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium">
+                    {translate("Welcome", "Bienvenida")}, {profile.name}
+                  </span>
+                </div>
+              )}
+              <div className="flex items-center gap-2 bg-primary-foreground/10 px-4 py-2 rounded-full backdrop-blur-md">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="animate-pulse"
+                >
+                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                  <path d="M2 17l10 5 10-5" />
+                  <path d="M2 12l10 5 10-5" />
+                </svg>
+                <span className="text-lg font-semibold">
+                  {translate("Points", "Puntos")}: {points}
+                </span>
+              </div>
+              <Button
+                onClick={toggleLanguage}
+                className="text-base px-6 rounded-full hover:scale-105 transition-all duration-300 bg-primary-foreground/10 hover:bg-primary-foreground/20"
+                variant="ghost"
+              >
+                {language === "en" ? "ES" : "EN"}
+              </Button>
+              <div className="p-1 rounded-full bg-primary-foreground/10">
+                <ThemeToggle />
+              </div>
+>>>>>>> Stashed changes
             </div>
 =======
             <ThemeToggle />
@@ -201,6 +269,7 @@ export default function Home() {
                 </TabsList>
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
               <TabsContent value="home">
                 <HomeComponent addPoints={addPoints} translate={translate} />
               </TabsContent>
@@ -229,6 +298,8 @@ export default function Home() {
         </Card>
       </main>
 =======
+=======
+>>>>>>> Stashed changes
                 <TabsContent value="home">
                   <HomeComponent addPoints={addPoints} translate={translate} />
                 </TabsContent>
@@ -256,6 +327,9 @@ export default function Home() {
             </CardContent>
           </Card>
         </main>
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
         <footer className="bg-card dark:bg-card text-card-foreground border-t border-border">
