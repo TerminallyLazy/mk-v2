@@ -1,16 +1,22 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextRequest, NextResponse } from "next/server";
 
+// Ensure the API key is defined
+const apiKey = process.env.GEMINI_API_KEY;
+if (!apiKey) {
+  throw new Error('GEMINI_API_KEY is not defined');
+}
+
 // Initialize the Gemini API with your API key
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+const genAI = new GoogleGenerativeAI(apiKey);
 
 export async function POST(req: NextRequest) {
   try {
     const { prompt, type, image } = await req.json();
 
     // Choose the appropriate model based on whether there's an image
-    const modelName = image ? 'gemini-pro-vision' : 'gemini-pro';
-    const model = genAI.getGenerativeModel({ model: modelName });
+    // const modelName = image ? 'gemini-exp-1114'; 
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-002",});
 
     let result;
     
@@ -31,7 +37,7 @@ export async function POST(req: NextRequest) {
       const chat = model.startChat({
         history: [],
         generationConfig: {
-          maxOutputTokens: 1000,
+          maxOutputTokens: 2000,
           temperature: 0.7,
           topP: 0.8,
           topK: 40,

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Button } from "@/app/components/ui/button";
 import { Card, CardContent } from "@/app/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/ui/tabs";
@@ -10,62 +10,55 @@ import { MilestonesComponent } from "@/app/components/milestones-component";
 import { MyLibraryComponentComponent } from "@/app/components/my-library-component";
 import TapestryComponent from "@/app/components/tapestry-component";
 import { PodcastComponent } from "@/app/components/podcast-component";
-<<<<<<< HEAD
 import { ThemeToggle } from "@/app/components/ui/theme-toggle";
-=======
-<<<<<<< Updated upstream
-import { ThemeToggle } from "@/app/components/ui/theme-toggle"
-=======
-import { ThemeToggle } from "@/app/components/ui/theme-toggle";
-import { WelcomeModal } from "@/app/components/welcome-modal";
-import { useOnboarding } from "@/hooks/use-onboarding";
->>>>>>> Stashed changes
->>>>>>> 5f3de48 (Fix merge conflict in app/page.tsx)
+import { AnimatedGlobe } from "@/app/components/ui/animated-globe";
 import Image from "next/image";
+import { AuthScreen } from "@/app/components/auth-screen";
 
 export default function Home() {
-  const [activeTab, setActiveTab] = React.useState("home");
-  const [points, setPoints] = React.useState(0);
-  const [language, setLanguage] = React.useState("en");
-  const { isCompleted, profile } = useOnboarding();
+  const [username, setUsername] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [language, setLanguage] = useState("en");
+  const [activeTab, setActiveTab] = useState("home");
 
-  // Initialize language and points from profile if available
-  React.useEffect(() => {
-    if (profile) {
-      setLanguage(profile.language);
-      // You could also initialize points from profile if you store them
-    }
-  }, [profile]);
+  const translate = useCallback((en: string, es: string) => {
+    return language === "en" ? en : es;
+  }, [language]);
 
-  const addPoints = (amount: number) => {
-    setPoints((prevPoints) => prevPoints + amount);
+  const handleAuthComplete = (name: string) => {
+    setUsername(name);
+  };
+
+  useEffect(() => {
+    // Check for existing username
+    const savedUsername = localStorage.getItem('username');
+    setUsername(savedUsername);
+    setIsLoading(false);
+  }, []);
+
+  const handleAddPoints = (amount: number) => {
+    // setPoints(prev => prev + amount);
   };
 
   const toggleLanguage = () => {
-    setLanguage((prev) => (prev === "en" ? "es" : "en"));
+    setLanguage(prev => prev === "en" ? "es" : "en");
   };
 
-  const handleLanguageChange = (newLanguage: 'en' | 'es') => {
-    setLanguage(newLanguage);
-  };
+  if (isLoading) {
+    return null; // or a loading spinner
+  }
 
-  const handleThemeChange = (theme: 'light' | 'dark') => {
-    // Update theme in the DOM
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-  };
-
-  const translate = React.useMemo(() => {
-    return (en: string, es: string) => (language === "en" ? en : es);
-  }, [language]);
+  if (!username) {
+    return <AuthScreen onComplete={handleAuthComplete} translate={translate} />;
+  }
 
   return (
-<<<<<<< Updated upstream
     <div className="flex flex-col min-h-screen">
       <header className="bg-primary/95 text-primary-foreground py-4 backdrop-blur-sm border-b border-border/40 sticky top-0 z-50">
         <div className="container mx-auto flex justify-between items-center px-4">
           <div className="flex items-center transition-transform hover:scale-102">
             <Image
-              src="/mklogo.png"
+              src="/momkidz-white.png"
               alt="MomsKidz Logo"
               width={280}
               height={84}
@@ -74,143 +67,66 @@ export default function Home() {
             />
           </div>
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2 bg-primary-foreground/10 px-4 py-2 rounded-full backdrop-blur-md">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="animate-pulse"
-              >
-                <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                <path d="M2 17l10 5 10-5" />
-                <path d="M2 12l10 5 10-5" />
-              </svg>
-              <span className="text-lg font-semibold">
-                {translate("Points", "Puntos")}: {points}
-              </span>
-            </div>
             <Button
               onClick={toggleLanguage}
-              className="text-base px-6 rounded-full hover:scale-105 transition-all duration-300 bg-primary-foreground/10 hover:bg-primary-foreground/20"
+              className="text-base px-4 py-2 hover:scale-105 transition-all duration-300 bg-primary-foreground/10 hover:bg-primary-foreground/20"
               variant="ghost"
+              size="sm"
             >
-              {language === "en" ? "ES" : "EN"}
+              <AnimatedGlobe isSpanish={language === "es"} />
             </Button>
-<<<<<<< HEAD
             <div className="p-1 rounded-full bg-primary-foreground/10">
               <ThemeToggle />
             </div>
-=======
-            <ThemeToggle />
-=======
-    <>
-      {!isCompleted && (
-        <WelcomeModal 
-          translate={translate} 
-          onLanguageChange={handleLanguageChange}
-          onThemeChange={handleThemeChange}
-        />
-      )}
-      <div className="flex flex-col min-h-screen">
-        <header className="bg-primary/95 text-primary-foreground py-4 backdrop-blur-sm border-b border-border/40 sticky top-0 z-50">
-          <div className="container mx-auto flex justify-between items-center px-4">
-            <div className="flex items-center transition-transform hover:scale-102">
-              <Image
-                src="/momkidz-white.png"
-                alt="MomsKidz Logo"
-                width={280}
-                height={84}
-                className="w-auto h-16 object-contain drop-shadow-md transition-all duration-300 hover:drop-shadow-xl"
-                priority
-              />
-            </div>
-            <div className="flex items-center gap-6">
-              {profile && (
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium">
-                    {translate("Welcome", "Bienvenida")}, {profile.name}
-                  </span>
-                </div>
-              )}
-              <div className="flex items-center gap-2 bg-primary-foreground/10 px-4 py-2 rounded-full backdrop-blur-md">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="animate-pulse"
-                >
-                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                  <path d="M2 17l10 5 10-5" />
-                  <path d="M2 12l10 5 10-5" />
-                </svg>
-                <span className="text-lg font-semibold">
-                  {translate("Points", "Puntos")}: {points}
-                </span>
-              </div>
-              <Button
-                onClick={toggleLanguage}
-                className="text-base px-6 rounded-full hover:scale-105 transition-all duration-300 bg-primary-foreground/10 hover:bg-primary-foreground/20"
-                variant="ghost"
-              >
-                {language === "en" ? "ES" : "EN"}
-              </Button>
-              <div className="p-1 rounded-full bg-primary-foreground/10">
-                <ThemeToggle />
-              </div>
-            </div>
->>>>>>> Stashed changes
->>>>>>> 5f3de48 (Fix merge conflict in app/page.tsx)
           </div>
-        </header>
+        </div>
+      </header>
 
-        <main className="flex-grow container mx-auto p-4 bg-background">
-          <Card className="border-border">
-            <CardContent className="p-6">
-              <Tabs defaultValue="home" value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6">
-                  <TabsTrigger value="home">
-                    {translate("Home", "Inicio")}
-                  </TabsTrigger>
-                  <TabsTrigger value="tapestry">
-                    {translate("Tapestry", "Tapiz")}
-                  </TabsTrigger>
-                  <TabsTrigger value="carelog">
-                    {translate("Care Log", "Registro de Cuidados")}
-                  </TabsTrigger>
-                  <TabsTrigger value="milestones">
-                    {translate("Milestones", "Hitos")}
-                  </TabsTrigger>
-                  <TabsTrigger value="library">
-                    {translate("My Library", "Mi Biblioteca")}
-                  </TabsTrigger>
-                  <TabsTrigger value="podcasts">
-                    {translate("Podcasts", "Podcasts")}
-                  </TabsTrigger>
-                </TabsList>
+      <main className="flex-grow container mx-auto p-4 bg-background">
+        <Card className="border-border">
+          <CardContent className="p-6">
+            <Tabs 
+              defaultValue="home" 
+              value={activeTab} 
+              onValueChange={setActiveTab}
+            >
+              <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6">
+                <TabsTrigger value="home">
+                  {translate("Home", "Inicio")}
+                </TabsTrigger>
+                <TabsTrigger value="tapestry">
+                  {translate("Tapestry", "Tapiz")}
+                </TabsTrigger>
+                <TabsTrigger value="carelog">
+                  {translate("Care Log", "Registro de Cuidados")}
+                </TabsTrigger>
+                <TabsTrigger value="milestones">
+                  {translate("Milestones", "Hitos")}
+                </TabsTrigger>
+                <TabsTrigger value="library">
+                  {translate("My Library", "Mi Biblioteca")}
+                </TabsTrigger>
+                <TabsTrigger value="podcasts">
+                  {translate("Podcasts", "Podcasts")}
+                </TabsTrigger>
+              </TabsList>
 
-<<<<<<< Updated upstream
               <TabsContent value="home">
-                <HomeComponent addPoints={addPoints} translate={translate} />
+                <HomeComponent 
+                  addPoints={handleAddPoints} 
+                  translate={translate}
+                  toggleLanguage={toggleLanguage}
+                  isSpanish={language === 'es'}
+                  username={username || ''}
+                />
               </TabsContent>
               
               <TabsContent value="tapestry">
-                <TapestryComponent addPoints={addPoints} translate={translate} />
+                <TapestryComponent addPoints={handleAddPoints} translate={translate} />
               </TabsContent>
               
               <TabsContent value="carelog">
-                <CareLogComponentComponent addPoints={addPoints} translate={translate} />
+                <CareLogComponentComponent addPoints={handleAddPoints} translate={translate} />
               </TabsContent>
               
               <TabsContent value="milestones">
@@ -228,50 +144,20 @@ export default function Home() {
           </CardContent>
         </Card>
       </main>
-=======
-                <TabsContent value="home">
-                  <HomeComponent addPoints={addPoints} translate={translate} />
-                </TabsContent>
-                
-                <TabsContent value="tapestry">
-                  <TapestryComponent addPoints={addPoints} translate={translate} />
-                </TabsContent>
-                
-                <TabsContent value="carelog">
-                  <CareLogComponentComponent addPoints={addPoints} translate={translate} />
-                </TabsContent>
-                
-                <TabsContent value="milestones">
-                  <MilestonesComponent />
-                </TabsContent>
-                
-                <TabsContent value="library">
-                  <MyLibraryComponentComponent translate={translate} />
-                </TabsContent>
-                
-                <TabsContent value="podcasts">
-                  <PodcastComponent translate={translate} />
-                </TabsContent>
-              </Tabs> 
-            </CardContent>
-          </Card>
-        </main>
->>>>>>> Stashed changes
 
-        <footer className="bg-card dark:bg-card text-card-foreground border-t border-border">
-          <div className="container mx-auto py-4 flex items-center justify-center space-x-4">
-            <span>© {new Date().getFullYear()} MomsKidz</span>
-            <Image
-              src="/logo.png"
-              alt="MomsKidz Logo"
-              width={40}
-              height={40}
-              className="w-auto h-8 object-contain"
-            />
-            <span>{translate("All rights reserved.", "Todos los derechos reservados.")}</span>
-          </div>
-        </footer>
-      </div>
-    </>
+      <footer className="bg-card dark:bg-card text-card-foreground border-t border-border">
+        <div className="container mx-auto py-4 flex items-center justify-center space-x-4">
+          <span>© {new Date().getFullYear()} MomsKidz</span>
+          <Image
+            src="/logo.png"
+            alt="MomsKidz Logo"
+            width={40}
+            height={40}
+            className="w-auto h-8 object-contain"
+          />
+          <span>{translate("All rights reserved.", "Todos los derechos reservados.")}</span>
+        </div>
+      </footer>
+    </div>
   );
 }

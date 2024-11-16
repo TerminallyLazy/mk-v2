@@ -18,11 +18,10 @@ export async function POST(request: Request) {
     const { prompt, type, image }: RequestBody = await request.json();
 
     // Select model based on type
-    const modelName = type === 'Med Lookup' ? 'gemini-pro-vision' : 'gemini-pro';
+    const modelName = type === 'Med Lookup' ? "gemini-1.5-pro-002" : "gemini-1.5-pro-002";
     const model = genAI.getGenerativeModel({ model: modelName });
 
     let result;
-    
     if (type === 'Med Lookup' && image) {
       // Handle image analysis for medication lookup
       const imageParts = [
@@ -48,9 +47,9 @@ export async function POST(request: Request) {
     }
 
     // Wait for the response and get the text
-    const response = await result.response;
+    const response = result.response;
     const text = response.text();
-
+    
     // For now, return an empty array for sources since safetyRatings isn't available
     return NextResponse.json({ 
       text,
